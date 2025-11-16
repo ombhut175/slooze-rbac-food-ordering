@@ -1,5 +1,52 @@
 /* Theme-specific token definitions with higher specificity */
 
+/* Warm Bistro Theme - Appetizing food colors (Tomato Red, Basil Green, Mustard Amber) */
+.theme-bistro:not(.dark) {
+  --background: oklch(0.98 0.006 70);
+  --foreground: oklch(0.18 0.012 25);
+  --card: oklch(0.99 0.005 70);
+  --card-foreground: oklch(0.18 0.012 25);
+  --popover: oklch(0.99 0.005 70);
+  --popover-foreground: oklch(0.18 0.012 25);
+  --primary: oklch(0.55 0.22 25);
+  --primary-foreground: oklch(0.98 0.006 70);
+  --secondary: oklch(0.75 0.18 65);
+  --secondary-foreground: oklch(0.1 0.01 25);
+  --muted: oklch(0.96 0.008 70);
+  --muted-foreground: oklch(0.45 0.05 70);
+  --accent: oklch(0.6 0.15 130);
+  --accent-foreground: oklch(0.98 0.006 70);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0.006 70);
+  --border: oklch(0.88 0.012 70);
+  --input: oklch(0.92 0.01 70);
+  --ring: oklch(0.55 0.22 25);
+  --radius: 0.75rem;
+}
+
+.theme-bistro.dark {
+  --background: oklch(0.1 0.008 25);
+  --foreground: oklch(0.94 0.012 70);
+  --card: oklch(0.14 0.01 25);
+  --card-foreground: oklch(0.94 0.012 70);
+  --popover: oklch(0.14 0.01 25);
+  --popover-foreground: oklch(0.94 0.012 70);
+  --primary: oklch(0.65 0.2 25);
+  --primary-foreground: oklch(0.1 0.008 25);
+  --secondary: oklch(0.65 0.18 65);
+  --secondary-foreground: oklch(0.1 0.008 25);
+  --muted: oklch(0.2 0.015 25);
+  --muted-foreground: oklch(0.68 0.08 70);
+  --accent: oklch(0.65 0.14 130);
+  --accent-foreground: oklch(0.1 0.008 25);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.94 0.012 70);
+  --border: oklch(0.25 0.015 25);
+  --input: oklch(0.18 0.012 25);
+  --ring: oklch(0.65 0.2 25);
+  --radius: 0.75rem;
+}
+
 /* Fintech Theme - Jade/Green with crisp borders and dense layouts */
 .theme-fintech:not(.dark) {
   --background: oklch(0.99 0.005 166);

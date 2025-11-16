@@ -79,15 +79,15 @@ export default function ForgotPasswordPage() {
     <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-2">
       <div className="order-2 md:order-1">
         <AuthCard
-          title={sent ? "Check your email" : "Reset your password"}
+          title={sent ? "Check your email" : "Reset password"}
           subtitle={
             sent
-              ? "We've sent a reset link if an account exists for that address."
-              : "Enter your email and we'll send you a reset link."
+              ? "We've sent a reset link to verify your email address."
+              : "Enter your email and we'll send you a secure reset link."
           }
           footer={
             <div className="space-x-1">
-              <span>Remembered it?</span>
+              <span>Remember now?</span>
               <MutedLink href={ROUTES.AUTH.LOGIN}>Back to login</MutedLink>
             </div>
           }
@@ -120,17 +120,17 @@ export default function ForgotPasswordPage() {
 function AsidePanel() {
   return (
     <div className="relative mx-auto max-w-md md:max-w-none">
-      <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-rose-500/15 via-pink-500/10 to-purple-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-white/10">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">We got your back</h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-          Secure account recovery ensures your learning never stops.
+      <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-500/15 via-yellow-500/10 to-orange-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-amber-900/30">
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-amber-900 dark:text-amber-100">We've got you</h2>
+        <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
+          Secure account recovery keeps you connected to your favorite restaurants and orders.
         </p>
         <div className="mt-4 grid gap-3 text-sm">
-          <div className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            One-click reset from your email
+          <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-3 shadow-sm transition-colors dark:border-amber-900/40 dark:bg-amber-950/60 text-amber-900 dark:text-amber-100">
+            🔐 Quick one-click reset from your email
           </div>
-          <div className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Strong security with token-based links
+          <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-3 shadow-sm transition-colors dark:border-amber-900/40 dark:bg-amber-950/60 text-amber-900 dark:text-amber-100">
+            ✓ Secure token-based recovery links
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Calendar, Shield } from "lucide-react";
+import { User, Mail, Calendar, Shield, ShoppingBag, MapPin, Clock, Star, TrendingUp } from "lucide-react";
 import { useAuthUser } from "@/hooks/use-auth-store";
 import { useAuthProtection } from "@/components/auth/auth-provider";
 import { AppNavigation } from "@/components/app-navigation";
@@ -33,7 +33,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/40">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
       {/* App Navigation */}
       <AppNavigation />
 
@@ -46,11 +46,11 @@ export default function DashboardPage() {
         >
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 sm:text-3xl">
-              Welcome back! 👋
+            <h1 className="text-3xl font-bold text-orange-700 dark:text-orange-100 sm:text-4xl">
+              Welcome back, {user.email?.split('@')[0]}! 🍽️
             </h1>
-            <p className="mt-2 text-slate-600 dark:text-slate-400">
-              Here's your account information and quick actions.
+            <p className="mt-2 text-orange-600 dark:text-orange-300">
+              Manage your orders, track deliveries, and discover new restaurants
             </p>
           </div>
 

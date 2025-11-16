@@ -14,6 +14,34 @@ export interface ThemeConfig {
 }
 
 export const themes: Record<string, ThemeConfig> = {
+  bistro: {
+    name: "bistro",
+    label: "Bistro",
+    primary: {
+      light: "tomato-red",
+      dark: "tomato-red",
+    },
+    neutral: {
+      light: "warm-gray",
+      dark: "warm-gray",
+    },
+    description: "Warm, appetizing food-ordering interface with bistro aesthetics and Material Design principles",
+    guidance: [
+      "Use warm, appetizing red (tomato/red 600) for primary CTAs like add-to-cart and checkout buttons",
+      "Apply green accents for success states (paid orders, confirmed deliveries) reflecting basil/natural ingredients",
+      "Use amber/mustard yellow for secondary actions, highlights, and promotional content",
+      "Keep surfaces warm and inviting with neutral warm grays, not cool blues",
+      "Design content-first layouts with food photography as the hero element",
+      "Implement soft border radius (0.75rem) for friendly, approachable UI",
+      "Use semantic colors: green for success/positive, amber for warnings/secondary, red for destructive/primary actions",
+      "Apply Material Design typography scale: restaurant names as headlines, menu items as titles, descriptions as body",
+      "Create clear visual hierarchy for prices with larger, bolder typography",
+      "Design prominent, high-contrast checkout buttons and order actions",
+      "Use cards with subtle shadows for menu items to create visual separation",
+      "Maintain accessibility with WCAG AA contrast ratios across light and dark modes",
+      "Apply smooth transitions and micro-interactions for order management (quantity changes, add/remove items)",
+    ],
+  },
   fintech: {
     name: "fintech",
     label: "Fintech",
@@ -173,6 +201,8 @@ export function getThemeTokens(themeName: string, mode: "light" | "dark") {
 
   // Theme-specific primary colors
   const primaryColors = {
+    "tomato-red": { light: "oklch(0.55 0.22 25)", dark: "oklch(0.65 0.2 25)" },
+    "warm-gray": { light: "oklch(0.98 0.006 70)", dark: "oklch(0.1 0.008 25)" },
     jade: { light: "oklch(0.646 0.222 166.116)", dark: "oklch(0.696 0.17 162.48)" },
     mint: { light: "oklch(0.6 0.118 184.704)", dark: "oklch(0.696 0.17 184.704)" },
     violet: { light: "oklch(0.488 0.243 264.376)", dark: "oklch(0.627 0.265 303.9)" },

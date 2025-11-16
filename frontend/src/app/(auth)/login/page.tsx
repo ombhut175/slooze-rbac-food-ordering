@@ -103,10 +103,10 @@ export default function LoginPage() {
       >
         <AuthCard
           title="Welcome back"
-          subtitle="Access your personalized learning dashboard"
+          subtitle="Order your favorite meals and track deliveries"
           footer={
             <div className="space-x-1">
-              <span>New to Quodo?</span>
+              <span>New to FoodHub?</span>
               <MutedLink href={ROUTES.AUTH.SIGNUP}>Create an account</MutedLink>
             </div>
           }
@@ -157,22 +157,22 @@ export default function LoginPage() {
 function HeroAside() {
   return (
     <div className="relative mx-auto max-w-md md:max-w-none">
-      <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-indigo-500/15 via-violet-500/10 to-fuchsia-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-white/10">
+      <div className="relative overflow-hidden rounded-3xl border border-orange-200 bg-gradient-to-br from-red-500/15 via-orange-500/10 to-amber-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-orange-900/30">
         <div className="mb-5">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Level up your learning</h2>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Quodo adapts to your pace with interactive modules, progress tracking, and AI-guided study paths.
+          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-orange-900 dark:text-orange-100">Hungry?</h2>
+          <p className="mt-2 text-sm text-orange-800 dark:text-orange-200">
+            Discover amazing food from your favorite restaurants, fast delivery, and exclusive meal deals.
           </p>
         </div>
         <ul className="grid gap-3 text-sm">
-          <li className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Personalized roadmaps and micro-goals
+          <li className="rounded-xl border border-orange-200 bg-orange-50/50 p-3 shadow-sm transition-colors dark:border-orange-900/40 dark:bg-orange-950/60 text-orange-900 dark:text-orange-100">
+            🚚 Fast & reliable delivery to your door
           </li>
-          <li className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Rich media lessons and live sessions
+          <li className="rounded-xl border border-orange-200 bg-orange-50/50 p-3 shadow-sm transition-colors dark:border-orange-900/40 dark:bg-orange-950/60 text-orange-900 dark:text-orange-100">
+            ⭐ Browse thousands of restaurants & dishes
           </li>
-          <li className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Certificates that matter in the real world
+          <li className="rounded-xl border border-orange-200 bg-orange-50/50 p-3 shadow-sm transition-colors dark:border-orange-900/40 dark:bg-orange-950/60 text-orange-900 dark:text-orange-100">
+            💰 Exclusive discounts and loyalty rewards
           </li>
         </ul>
       </div>

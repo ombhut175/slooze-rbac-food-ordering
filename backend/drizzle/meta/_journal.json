@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1763294260811,
+      "tag": "0000_marvelous_gunslinger",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763296003980,
+      "tag": "0001_faulty_famine",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763296081160,
+      "tag": "0002_lethal_cammi",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763296237126,
+      "tag": "0003_right_mongu",
+      "breakpoints": true
+    }
+  ]
+}

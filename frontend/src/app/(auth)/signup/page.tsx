@@ -102,8 +102,8 @@ export default function SignupPage() {
     <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-2">
       <div className="order-2 md:order-1">
         <AuthCard
-          title="Create your account"
-          subtitle="Join thousands of learners accelerating their careers"
+          title="Get started"
+          subtitle="Join FoodHub and order from your favorite restaurants"
           footer={
             <div className="space-x-1">
               <span>Already have an account?</span>
@@ -150,20 +150,20 @@ export default function SignupPage() {
 function SignupAside() {
   return (
     <div className="relative mx-auto max-w-md md:max-w-none">
-      <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-sky-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-white/10">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Your path, accelerated</h2>
-        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-          Build real-world skills with curated courses, hands-on projects, and mentor support.
+      <div className="relative overflow-hidden rounded-3xl border border-green-200 bg-gradient-to-br from-green-500/15 via-emerald-500/10 to-teal-500/15 p-6 shadow-2xl backdrop-blur-sm dark:border-green-900/30">
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-green-900 dark:text-green-100">Start eating better</h2>
+        <p className="mt-2 text-sm text-green-800 dark:text-green-200">
+          Explore diverse cuisines, track your orders, and enjoy seamless food delivery experience.
         </p>
         <div className="mt-4 grid gap-3 text-sm">
-          <div className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Live cohort-based learning
+          <div className="rounded-xl border border-green-200 bg-green-50/50 p-3 shadow-sm transition-colors dark:border-green-900/40 dark:bg-green-950/60 text-green-900 dark:text-green-100">
+            🍽️ Curated restaurants and cuisines
           </div>
-          <div className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Peer reviews and code clinics
+          <div className="rounded-xl border border-green-200 bg-green-50/50 p-3 shadow-sm transition-colors dark:border-green-900/40 dark:bg-green-950/60 text-green-900 dark:text-green-100">
+            💳 Secure payments and instant confirmations
           </div>
-          <div className="rounded-xl border border-black/10 bg-white/50 p-3 shadow-sm transition-colors dark:border-white/10 dark:bg-slate-900/60">
-            Career-ready portfolio projects
+          <div className="rounded-xl border border-green-200 bg-green-50/50 p-3 shadow-sm transition-colors dark:border-green-900/40 dark:bg-green-950/60 text-green-900 dark:text-green-100">
+            🎁 Seasonal offers and surprise bonuses
           </div>
         </div>
       </div>

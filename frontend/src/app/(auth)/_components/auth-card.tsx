@@ -61,10 +61,10 @@ export default function AuthCard({ title, subtitle, footer, children }: AuthCard
         {/* Animated gradient frame */}
         <div aria-hidden className="pointer-events-none absolute -inset-[1px] rounded-[22px]">
           <motion.div
-            className="absolute inset-0 rounded-[22px] opacity-80"
+            className="absolute inset-0 rounded-[22px] opacity-40"
             style={{
               background:
-                "conic-gradient(from 0deg at 50% 50%, rgba(99,102,241,0.35), rgba(236,72,153,0.35), rgba(34,197,94,0.35), rgba(99,102,241,0.35))",
+                "conic-gradient(from 0deg at 50% 50%, rgba(229,57,53,0.2), rgba(255,152,0,0.15), rgba(229,57,53,0.2))",
               filter: "blur(10px)",
             }}
             animate={{ rotate: 360 }}
@@ -73,20 +73,20 @@ export default function AuthCard({ title, subtitle, footer, children }: AuthCard
         </div>
 
         {/* Card (glass) */}
-        <div className="relative overflow-hidden rounded-[20px] border border-black/10 bg-white/70 p-6 shadow-2xl ring-1 ring-black/5 backdrop-blur-md transition-colors dark:border-white/10 dark:bg-slate-900/70 dark:ring-white/10 md:p-7">
+        <div className="relative overflow-hidden rounded-[20px] border border-slate-200/50 bg-white/85 p-6 shadow-xl ring-1 ring-white/60 backdrop-blur-md transition-colors dark:border-orange-900/40 dark:bg-slate-900/40 dark:ring-slate-800/40 md:p-7">
           {/* Reactive glow (no Tailwind arbitrary SVG to avoid parser edge cases) */}
           <div
             aria-hidden
             className="pointer-events-none absolute -inset-2 rounded-[20px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             style={{
               background:
-                "radial-gradient(220px 220px at var(--x,50%) var(--y,0%), rgba(99,102,241,0.18), transparent 60%)",
+                "radial-gradient(220px 220px at var(--x,50%) var(--y,0%), rgba(229,57,53,0.08), transparent 60%)",
             }}
           />
 
           <div className="relative z-10 flex flex-col gap-6">
             <header className="flex flex-col gap-1" style={{ transform: "translateZ(40px)" }}>
-              <h1 className="bg-gradient-to-r from-slate-900 via-indigo-700 to-fuchsia-700 bg-clip-text text-3xl font-bold tracking-tight text-transparent dark:from-white dark:via-indigo-300 dark:to-fuchsia-300 md:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight text-orange-700 dark:text-orange-100 md:text-4xl">
                 {title}
               </h1>
               {subtitle ? (
@@ -98,7 +98,7 @@ export default function AuthCard({ title, subtitle, footer, children }: AuthCard
           </div>
 
           {/* bottom accent */}
-          <div className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-orange-300/20 to-transparent" />
         </div>
       </motion.div>
 
@@ -119,11 +119,11 @@ export function Field({ label, hint, error, children }: { label: string; hint?: 
       </div>
       <div
         className={[
-          "rounded-xl bg-white/70 p-[2px] transition-all dark:bg-slate-950/60",
-          error ? "ring-2 ring-rose-500/40" : "ring-1 ring-black/10 dark:ring-white/10",
+          "rounded-xl bg-white/70 p-[2px] transition-all dark:bg-orange-950/20",
+          error ? "ring-2 ring-red-500/50" : "ring-1 ring-slate-200 dark:ring-orange-900/30",
         ].join(" ")}
       >
-        <div className="rounded-[10px] bg-white/80 p-0.5 shadow-sm transition-colors dark:bg-slate-950/60">{children}</div>
+        <div className="rounded-[10px] bg-white/80 p-0.5 shadow-sm transition-colors dark:bg-orange-950/30">{children}</div>
       </div>
       {error ? <p className="text-xs text-rose-500">{error}</p> : null}
     </div>
@@ -147,7 +147,7 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
         }}
         className={[
           "h-11 w-full rounded-[10px] border bg-white/90 px-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition-all",
-          "border-transparent hover:border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 dark:border-transparent dark:bg-slate-950/70 dark:text-slate-100",
+          "border-slate-200 hover:border-orange-300 focus:border-orange-400 focus:ring-2 focus:ring-orange-500/10 dark:border-orange-900/30 dark:bg-orange-950/20 dark:text-slate-100",
           props.className,
         ]
           .filter(Boolean)
@@ -157,7 +157,7 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
         aria-hidden
         initial={false}
         animate={{ opacity: focused ? 1 : 0 }}
-        className="pointer-events-none absolute -inset-0.5 rounded-[12px] bg-gradient-to-r from-indigo-500/20 via-fuchsia-500/20 to-emerald-500/20 blur-md"
+        className="pointer-events-none absolute -inset-0.5 rounded-[12px] bg-gradient-to-r from-orange-500/10 via-orange-400/10 to-orange-500/10 blur-md"
       />
     </div>
   );
@@ -182,7 +182,7 @@ export function PasswordInput({ className, ...props }: React.InputHTMLAttributes
         type={visible ? "text" : "password"}
         className={[
           "h-11 w-full rounded-[10px] border bg-white/90 px-3 pr-12 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition-all",
-          "border-transparent hover:border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 dark:border-transparent dark:bg-slate-950/70 dark:text-slate-100",
+          "border-slate-200 hover:border-orange-300 focus:border-orange-400 focus:ring-2 focus:ring-orange-500/10 dark:border-orange-900/30 dark:bg-orange-950/20 dark:text-slate-100",
           className,
         ]
           .filter(Boolean)
@@ -200,7 +200,7 @@ export function PasswordInput({ className, ...props }: React.InputHTMLAttributes
         aria-hidden
         initial={false}
         animate={{ opacity: focused ? 1 : 0 }}
-        className="pointer-events-none absolute -inset-0.5 rounded-[12px] bg-gradient-to-r from-indigo-500/20 via-fuchsia-500/20 to-emerald-500/20 blur-md"
+        className="pointer-events-none absolute -inset-0.5 rounded-[12px] bg-gradient-to-r from-orange-500/10 via-orange-400/10 to-orange-500/10 blur-md"
       />
     </div>
   );
@@ -229,12 +229,12 @@ export function SubmitButton({ children, loading, className, ...props }: React.B
       disabled={loading || props.disabled}
       className={[
         "group relative inline-flex h-11 w-full items-center justify-center gap-2 overflow-hidden rounded-xl px-4 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed",
-        "shadow-lg shadow-indigo-600/20",
+        "shadow-lg shadow-red-600/40",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
-      style={{ background: "linear-gradient(135deg,#4f46e5,#7c3aed,#ec4899)" }}
+      style={{ background: "linear-gradient(135deg,#E53935,#FF8C00)" }}
       {...(props as any)}
     >
       {/* Sheen sweep */}

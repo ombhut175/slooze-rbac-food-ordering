@@ -2,56 +2,57 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ROUTES } from "@/constants/routes";
 import hackLog from "@/lib/logger";
 import {
-  GraduationCap,
-  Rocket,
-  BrainCircuit,
-  BookOpenCheck,
-  ShieldCheck,
-  Users,
-  Sparkles,
+  UtensilsCrossed,
+  Star,
+  Clock,
+  MapPin,
   ArrowRight,
-  PlayCircle,
+  Flame,
+  Leaf,
+  ChefHat,
 } from "lucide-react";
 
-// Motion variants
 const container = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.06 } },
+  show: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
 };
+
 const item = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.2, 0.8, 0.2, 1] as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45 } },
 };
 
-type Feature = {
-  title: string;
-  desc: string;
-  icon: React.ReactNode;
-  points: string[];
+type RestaurantCard = {
+  name: string;
+  cuisine: string;
+  rating: number;
+  deliveryTime: number;
+  image: string;
+  discount?: number;
 };
 
-export default function LandingPage() {
+export default function HomePage() {
   React.useEffect(() => {
-    hackLog.componentMount('LandingPage', {
+    hackLog.componentMount("HomePage", {
       timestamp: new Date().toISOString(),
-      route: '/',
+      route: "/",
     });
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-background to-muted/40 text-foreground antialiased">
+    <div className="relative min-h-screen bg-gradient-to-b from-background to-card/20 text-foreground antialiased">
       <BackgroundAura />
       <Header />
-
+      
       <main className="relative z-10 px-4 md:px-6">
         <Hero />
-        <Highlights />
-        <Stats />
+        <FeaturedRestaurants />
+        <WhyChooseUs />
         <CTA />
         <Footer />
       </main>
@@ -61,28 +62,29 @@ export default function LandingPage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border/60 bg-card/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
+    <header className="sticky top-0 z-30 w-full border-b border-border/40 bg-card/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link href="/" className="group inline-flex items-center gap-2">
-          <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 shadow-sm ring-1 ring-border transition-transform duration-200 group-hover:scale-105">
-            <GraduationCap className="h-5 w-5 text-white drop-shadow" />
+          <span className="relative grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-red-500 to-orange-500 shadow-md">
+            <UtensilsCrossed className="h-5 w-5 text-white" />
           </span>
           <div className="flex flex-col leading-tight">
-            <span className="text-base font-semibold tracking-tight">Quodo</span>
-            <span className="text-[11px] text-muted-foreground">EdTech Platform</span>
+            <span className="text-base font-bold tracking-tight text-foreground">FoodHub</span>
+            <span className="text-[10px] text-muted-foreground">Food Delivery</span>
           </div>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          <HeaderLink href="#features">Features</HeaderLink>
-          <HeaderLink href="#how-it-works">How it works</HeaderLink>
-          <HeaderLink href="#pricing">Pricing</HeaderLink>
+          <HeaderLink href="#restaurants">Restaurants</HeaderLink>
+          <HeaderLink href="#features">Why Us</HeaderLink>
           <HeaderLink href="/styleguide">Styleguide</HeaderLink>
         </nav>
 
         <div className="flex items-center gap-2">
-          <GhostLink href={ROUTES.AUTH.LOGIN} className="hidden sm:inline-flex">Login</GhostLink>
-          <PrimaryLink href={ROUTES.AUTH.SIGNUP}>Get started</PrimaryLink>
+          <GhostLink href={ROUTES.AUTH.LOGIN} className="hidden sm:inline-flex">
+            Login
+          </GhostLink>
+          <PrimaryLink href={ROUTES.AUTH.SIGNUP}>Order Now</PrimaryLink>
           <ThemeToggle />
         </div>
       </div>
@@ -94,10 +96,10 @@ function HeaderLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href as any}
-      className="group relative rounded-md px-3 py-2 text-sm font-medium text-foreground/90 transition-colors hover:text-foreground"
+      className="group relative rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"
     >
       <span className="relative z-10">{children}</span>
-      <span className="absolute inset-0 -z-0 rounded-md bg-foreground/5 opacity-0 transition-opacity group-hover:opacity-100" />
+      <span className="absolute inset-0 -z-0 rounded-md bg-primary/5 opacity-0 transition-opacity group-hover:opacity-100" />
       <span className="pointer-events-none absolute inset-x-3 -bottom-0.5 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
     </Link>
   );
@@ -105,200 +107,225 @@ function HeaderLink({ href, children }: { href: string; children: React.ReactNod
 
 function Hero() {
   return (
-    <section className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:py-24">
-      <motion.div variants={container} initial="hidden" animate="show" className="order-2 md:order-1">
-        <motion.div variants={item} className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-foreground/80 shadow-sm">
-          <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
-          Learn smarter with AI-guided paths
+    <section className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:py-24">
+      <motion.div variants={container} initial="hidden" animate="show">
+        <motion.div
+          variants={item}
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs font-medium text-foreground/80 shadow-sm"
+        >
+          <Flame className="h-3.5 w-3.5 text-primary" />
+          Fastest delivery in your area
         </motion.div>
-        <motion.h1 variants={item} className="mt-4 bg-gradient-to-r from-foreground via-indigo-600 to-fuchsia-600 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent md:text-5xl lg:text-6xl dark:via-indigo-300 dark:to-fuchsia-300">
-          Unlock your next skill, faster
+
+        <motion.h1
+          variants={item}
+          className="mt-4 bg-gradient-to-r from-foreground via-primary to-orange-600 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent md:text-5xl lg:text-6xl dark:via-red-400 dark:to-orange-400"
+        >
+          Craving Something Delicious?
         </motion.h1>
-        <motion.p variants={item} className="mt-4 max-w-xl text-base text-muted-foreground md:text-lg">
-          Quodo is the modern learning platform for ambitious learners. Follow curated roadmaps, track progress, and master skills with hands-on projects.
+
+        <motion.p
+          variants={item}
+          className="mt-4 max-w-xl text-base text-muted-foreground md:text-lg"
+        >
+          Discover local restaurants and get your favorite food delivered hot and fresh. From gourmet bistros to street food favorites.
         </motion.p>
+
         <motion.div variants={item} className="mt-6 flex flex-wrap items-center gap-3">
           <PrimaryLink href={ROUTES.AUTH.SIGNUP} className="gap-2">
-            Start learning free
+            Start Ordering
             <ArrowRight className="h-4 w-4" />
           </PrimaryLink>
-          <GhostLink href={ROUTES.AUTH.LOGIN} className="gap-2">
-            <PlayCircle className="h-4 w-4" />
-            View demo
+          <GhostLink href="#restaurants" className="gap-2">
+            <MapPin className="h-4 w-4" />
+            View Restaurants
           </GhostLink>
         </motion.div>
-        <motion.div variants={item} className="mt-6 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-emerald-500" />Trusted by 10k+ learners</div>
-          <div className="flex items-center gap-2"><Users className="h-4 w-4 text-sky-500" />Cohort-based learning</div>
+
+        <motion.div
+          variants={item}
+          className="mt-6 flex flex-wrap items-center gap-6 text-sm text-muted-foreground"
+        >
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary" />
+            30-45 min delivery
+          </div>
+          <div className="flex items-center gap-2">
+            <Star className="h-4 w-4 text-secondary" />
+            Trusted by 50k+ customers
+          </div>
         </motion.div>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.6 }} className="order-1 md:order-2">
-        <HeroVisual />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative h-80 rounded-2xl overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative text-center">
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="text-6xl"
+            >
+              🍕
+            </motion.div>
+            <p className="mt-4 text-sm font-medium text-foreground/80">Premium Food Ordering</p>
+          </div>
+        </div>
       </motion.div>
     </section>
   );
 }
 
-function useTilt() {
-  const ref = React.useRef<HTMLDivElement | null>(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rx = useSpring(useTransform(my, [0, 1], [8, -8]), { stiffness: 150, damping: 16 });
-  const ry = useSpring(useTransform(mx, [0, 1], [-8, 8]), { stiffness: 150, damping: 16 });
+function FeaturedRestaurants() {
+  const restaurants: RestaurantCard[] = [
+    {
+      name: "The Rustic Bistro",
+      cuisine: "French • Bistro",
+      rating: 4.8,
+      deliveryTime: 35,
+      image: "🍽️",
+      discount: 20,
+    },
+    {
+      name: "Spice Route",
+      cuisine: "Indian • Fine Dining",
+      rating: 4.7,
+      deliveryTime: 40,
+      image: "🌶️",
+      discount: 15,
+    },
+    {
+      name: "The Pasta House",
+      cuisine: "Italian • Casual",
+      rating: 4.9,
+      deliveryTime: 30,
+      image: "🍝",
+    },
+    {
+      name: "Dragon Wok",
+      cuisine: "Chinese • Asian",
+      rating: 4.6,
+      deliveryTime: 35,
+      image: "🥢",
+      discount: 25,
+    },
+  ];
 
-  function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
-    mx.set(x);
-    my.set(y);
-    el.style.setProperty("--x", `${x * 100}%`);
-    el.style.setProperty("--y", `${y * 100}%`);
-  }
-  function onMouseLeave() { mx.set(0.5); my.set(0.5); }
-  return { ref, rx, ry, onMouseMove, onMouseLeave } as const;
-}
-
-function HeroVisual() {
-  const { ref, rx, ry, onMouseMove, onMouseLeave } = useTilt();
   return (
-    <motion.div
-      ref={ref}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-      style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
-      className="group relative will-change-transform"
-    >
-      {/* Animated gradient frame */}
-      <div aria-hidden className="pointer-events-none absolute -inset-[1px] rounded-[22px]">
-        <motion.div
-          className="absolute inset-0 rounded-[22px] opacity-80"
-          style={{
-            background:
-              "conic-gradient(from 0deg at 50% 50%, rgba(99,102,241,0.35), rgba(236,72,153,0.35), rgba(34,197,94,0.35), rgba(99,102,241,0.35))",
-            filter: "blur(10px)",
-          }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
-        />
+    <section id="restaurants" className="mx-auto max-w-7xl py-12 md:py-16 lg:py-20">
+      <div className="mb-10 md:mb-14">
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Featured Restaurants</h2>
+        <p className="mt-2 text-muted-foreground">Discover amazing food from your favorite local restaurants</p>
       </div>
 
-      {/* Card */}
-      <div className="relative overflow-hidden rounded-[20px] border border-border bg-card/80 p-6 shadow-2xl ring-1 ring-border/60 backdrop-blur-md md:p-7">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-2 rounded-[20px] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          style={{ background: "radial-gradient(220px 220px at var(--x,50%) var(--y,0%), rgba(99,102,241,0.18), transparent 60%)" }}
-        />
-
-        <div className="relative z-10 flex flex-col gap-4" style={{ transform: "translateZ(30px)" }}>
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">Your AI learning copilot</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Adaptive roadmaps, instant feedback, and project-driven lessons — all tailored to your goals.
-            </p>
-          </div>
-          <ul className="grid gap-3 text-sm">
-            <li className="rounded-xl border border-border bg-card/70 p-3 shadow-sm transition-colors">
-              <div className="flex items-center gap-2"><BrainCircuit className="h-4 w-4 text-fuchsia-500" /> Personalized AI study paths</div>
-            </li>
-            <li className="rounded-xl border border-border bg-card/70 p-3 shadow-sm transition-colors">
-              <div className="flex items-center gap-2"><BookOpenCheck className="h-4 w-4 text-indigo-500" /> Hands-on projects, real outcomes</div>
-            </li>
-            <li className="rounded-xl border border-border bg-card/70 p-3 shadow-sm transition-colors">
-              <div className="flex items-center gap-2"><Rocket className="h-4 w-4 text-emerald-500" /> Track progress and build momentum</div>
-            </li>
-          </ul>
-        </div>
-
-        <div className="pointer-events-none absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-      </div>
-    </motion.div>
-  );
-}
-
-function Highlights() {
-  return (
-    <section id="features" className="mx-auto max-w-6xl py-10 md:py-14 lg:py-16">
-      <div className="mx-auto mb-8 max-w-2xl text-center md:mb-12">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">Everything you need to accelerate learning</h2>
-        <p className="mt-2 text-muted-foreground">Designed with a premium, modern aesthetic that matches your auth theme.</p>
-      </div>
-
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((f) => (
-          <motion.div key={f.title as string} whileHover={{ y: -4 }} whileTap={{ scale: 0.995 }} className="h-full">
-            <div className="group h-full overflow-hidden rounded-2xl border border-border bg-card/80 shadow-sm transition-all hover:shadow-xl">
-              <div className="p-6">
-                <div className="flex items-start gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-tr from-indigo-500/20 via-violet-500/20 to-fuchsia-500/20 ring-1 ring-border">
-                    {f.icon}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="grid gap-5 md:grid-cols-2 lg:grid-cols-4"
+      >
+        {restaurants.map((restaurant) => (
+          <motion.div
+            key={restaurant.name}
+            variants={item}
+            whileHover={{ y: -4 }}
+            className="group"
+          >
+            <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-lg">
+              <div className="relative h-40 bg-gradient-to-br from-primary/15 via-secondary/15 to-accent/10 flex items-center justify-center text-5xl">
+                {restaurant.image}
+                {restaurant.discount && (
+                  <div className="absolute top-3 right-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold">
+                    {restaurant.discount}% OFF
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold leading-tight tracking-tight">{f.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
+                )}
+              </div>
+
+              <div className="p-4">
+                <h3 className="font-bold text-lg leading-tight tracking-tight text-foreground">
+                  {restaurant.name}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">{restaurant.cuisine}</p>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-secondary text-secondary" />
+                    <span className="text-sm font-medium">{restaurant.rating}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock className="h-4 w-4" />
+                    {restaurant.deliveryTime} min
                   </div>
                 </div>
-                <ul className="mt-4 grid gap-2 text-sm text-muted-foreground">
-                  {f.points.map((p) => (
-                    <li key={p} className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary" /> {p}
-                    </li>
-                  ))}
-                </ul>
+
+                <button className="mt-4 w-full bg-primary text-primary-foreground py-2.5 rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+                  Order Now
+                </button>
               </div>
             </div>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }
 
-const features: Feature[] = [
-  {
-    title: "Adaptive Learning",
-    desc: "AI tailors lessons to your strengths and areas for growth.",
-    icon: <BrainCircuit className="h-5 w-5 text-fuchsia-600 dark:text-fuchsia-400" />,
-    points: ["Personalized modules", "Dynamic difficulty", "Smart reminders"],
-  },
-  {
-    title: "Project-Based Curriculum",
-    desc: "Build a real portfolio with guided, hands-on projects.",
-    icon: <BookOpenCheck className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />,
-    points: ["Step-by-step briefs", "Real-world scenarios", "Code reviews"],
-  },
-  {
-    title: "Motivation & Momentum",
-    desc: "Stay consistent with streaks, checkpoints, and cohorts.",
-    icon: <Rocket className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />,
-    points: ["Weekly sprints", "Peer accountability", "Progress tracker"],
-  },
-];
+function WhyChooseUs() {
+  const features = [
+    {
+      icon: <ChefHat className="h-6 w-6" />,
+      title: "Premium Quality",
+      description: "Only the finest restaurants and ingredients",
+    },
+    {
+      icon: <Flame className="h-6 w-6" />,
+      title: "Super Fast",
+      description: "Average delivery in 30-45 minutes, hot and fresh",
+    },
+    {
+      icon: <Leaf className="h-6 w-6" />,
+      title: "Healthy Options",
+      description: "Curated selection of nutritious meals",
+    },
+    {
+      icon: <Star className="h-6 w-6" />,
+      title: "Guaranteed Fresh",
+      description: "Real-time tracking and quality assurance",
+    },
+  ];
 
-function Stats() {
   return (
-    <section className="mx-auto max-w-6xl py-10 md:py-14 lg:py-16">
+    <section id="features" className="mx-auto max-w-7xl py-12 md:py-16 lg:py-20">
+      <div className="mb-10 md:mb-14 text-center">
+        <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Why Choose Us</h2>
+        <p className="mt-2 text-muted-foreground max-w-2xl mx-auto">
+          We're dedicated to bringing you the best food ordering experience with premium quality and exceptional service
+        </p>
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.5 }}
-        className="grid gap-6 rounded-3xl border border-border bg-card/70 p-6 shadow-sm backdrop-blur-sm md:grid-cols-4"
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
       >
-        {[
-          { label: "Active learners", value: "10k+" },
-          { label: "Completion rate", value: "92%" },
-          { label: "Projects shipped", value: "25k+" },
-          { label: "Avg. review score", value: "4.8/5" },
-        ].map((s) => (
-          <div key={s.label} className="text-center md:text-left">
-            <div className="text-3xl font-semibold tracking-tight">{s.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
-          </div>
+        {features.map((feature, idx) => (
+          <motion.div key={idx} variants={item}>
+            <div className="rounded-2xl border border-border bg-card/60 p-6 shadow-sm hover:shadow-md transition-all">
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-lg bg-primary/15 text-primary mb-4">
+                {feature.icon}
+              </div>
+              <h3 className="font-semibold text-lg leading-tight mb-2">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground">{feature.description}</p>
+            </div>
+          </motion.div>
         ))}
       </motion.div>
     </section>
@@ -307,27 +334,28 @@ function Stats() {
 
 function CTA() {
   return (
-    <section id="pricing" className="relative mx-auto max-w-6xl py-12 md:py-16 lg:py-20">
+    <section className="relative mx-auto max-w-7xl py-12 md:py-16 lg:py-20">
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.5 }}
-        className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-indigo-500/15 via-violet-500/10 to-fuchsia-500/15 p-8 shadow-2xl backdrop-blur-sm"
+        className="relative overflow-hidden rounded-3xl border border-border/60 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 p-8 shadow-lg backdrop-blur-sm"
       >
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <h3 className="text-2xl font-bold tracking-tight md:text-3xl">Start learning today — it’s free to try</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Create your account in seconds. Access core modules free. Upgrade anytime to unlock cohorts and advanced mentorship.
+            <h3 className="text-3xl font-bold tracking-tight md:text-4xl">
+              Start Your Food Journey Today
+            </h3>
+            <p className="mt-3 text-base text-muted-foreground">
+              Join thousands of happy customers. Create your account now and get exclusive welcome discounts on your first order.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 md:justify-end">
             <PrimaryLink href={ROUTES.AUTH.SIGNUP} className="gap-2">
-              Create free account
+              Create Account
               <ArrowRight className="h-4 w-4" />
             </PrimaryLink>
-            <GhostLink href={ROUTES.AUTH.LOGIN}>I already have an account</GhostLink>
           </div>
         </div>
       </motion.div>
@@ -337,19 +365,45 @@ function CTA() {
 
 function Footer() {
   return (
-    <footer className="mx-auto mt-10 max-w-6xl border-t border-border py-8 text-sm text-muted-foreground">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="flex items-center gap-2 text-foreground">
-          <span className="relative grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 ring-1 ring-border">
-            <GraduationCap className="h-4 w-4 text-white" />
-          </span>
-          <span className="font-medium">Quodo</span>
-          <span className="text-xs text-muted-foreground">© {new Date().getFullYear()}</span>
+    <footer className="mx-auto mt-14 max-w-7xl border-t border-border/40 py-10 text-sm text-muted-foreground">
+      <div className="grid gap-8 md:grid-cols-4 mb-8">
+        <div>
+          <div className="flex items-center gap-2 text-foreground font-semibold mb-4">
+            <UtensilsCrossed className="h-5 w-5 text-primary" />
+            FoodHub
+          </div>
+          <p className="text-xs">Bringing quality food to your doorstep</p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link href={ROUTES.AUTH.LOGIN} className="link-underline-anim">Login</Link>
-          <Link href={ROUTES.AUTH.SIGNUP} className="link-underline-anim">Sign up</Link>
-          <Link href={ROUTES.STYLEGUIDE} className="link-underline-anim">Styleguide</Link>
+        <div>
+          <h4 className="font-semibold text-foreground mb-3">Company</h4>
+          <ul className="space-y-2">
+            <li><Link href="#" className="hover:text-foreground transition-colors">About Us</Link></li>
+            <li><Link href="#" className="hover:text-foreground transition-colors">Careers</Link></li>
+            <li><Link href="#" className="hover:text-foreground transition-colors">Blog</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold text-foreground mb-3">Support</h4>
+          <ul className="space-y-2">
+            <li><Link href="#" className="hover:text-foreground transition-colors">Help Center</Link></li>
+            <li><Link href="#" className="hover:text-foreground transition-colors">Contact Us</Link></li>
+            <li><Link href="#" className="hover:text-foreground transition-colors">FAQ</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold text-foreground mb-3">Legal</h4>
+          <ul className="space-y-2">
+            <li><Link href="#" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
+            <li><Link href="#" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
+          </ul>
+        </div>
+      </div>
+      <div className="border-t border-border/40 pt-8 flex flex-col md:flex-row items-center justify-between">
+        <p>© 2024 FoodHub. All rights reserved.</p>
+        <div className="flex gap-4 mt-4 md:mt-0">
+          <Link href="#" className="hover:text-foreground transition-colors">Twitter</Link>
+          <Link href="#" className="hover:text-foreground transition-colors">Facebook</Link>
+          <Link href="#" className="hover:text-foreground transition-colors">Instagram</Link>
         </div>
       </div>
     </footer>
@@ -359,65 +413,79 @@ function Footer() {
 function BackgroundAura() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {/* Soft radial gradient blobs */}
-      <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/30 to-fuchsia-400/20 blur-3xl dark:from-indigo-500/20 dark:to-fuchsia-500/10" />
-      <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-sky-400/25 to-emerald-400/20 blur-3xl dark:from-sky-500/15 dark:to-emerald-500/10" />
+      <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-primary/25 to-secondary/20 blur-3xl dark:from-primary/15 dark:to-secondary/10" />
+      <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-accent/20 to-primary/15 blur-3xl dark:from-accent/10 dark:to-primary/10" />
 
-      {/* Subtle grid pattern */}
       <div
-        className="absolute inset-0 opacity-[0.35] [mask-image:radial-gradient(55%_60%_at_50%_40%,black,transparent)] dark:opacity-[0.25]"
+        className="absolute inset-0 opacity-20 dark:opacity-10"
         style={{
           backgroundImage:
-            "linear-gradient(to right, rgba(100,116,139,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,0.15) 1px, transparent 1px)",
-          backgroundSize: "28px 28px, 28px 28px",
+            "linear-gradient(to right, rgba(100,116,139,0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,0.1) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
           backgroundPosition: "-1px -1px",
         }}
       />
 
-      {/* Top highlight line */}
-      <div className="absolute inset-x-0 top-[64px] h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+      <div className="absolute inset-x-0 top-[64px] h-px bg-gradient-to-r from-transparent via-foreground/5 to-transparent" />
     </div>
   );
 }
 
-// Styled anchor buttons (no invalid nested button inside Link)
-function PrimaryLink({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) {
+function PrimaryLink({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href as any}
       className={[
-        "group relative inline-flex h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold text-white",
-        "shadow-lg shadow-indigo-600/20 ring-1 ring-white/15",
-        "transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30",
-        "btn-super",
+        "group relative inline-flex h-11 items-center justify-center rounded-lg px-5 text-sm font-semibold text-primary-foreground",
+        "bg-primary shadow-md shadow-primary/40 ring-1 ring-white/20",
+        "transition-all hover:shadow-lg hover:shadow-primary/50 hover:scale-105 active:scale-95",
+        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/40",
         className,
-      ].filter(Boolean).join(" ")}
-      style={{ backgroundImage: "linear-gradient(135deg,#4f46e5,#7c3aed,#ec4899)" }}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <span className="relative z-10 flex items-center gap-2">{children}</span>
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
         style={{
-          backgroundImage: "linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)",
-          backgroundSize: "200% 100%",
-          mixBlendMode: "overlay",
+          backgroundImage:
+            "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
         }}
       />
     </Link>
   );
 }
 
-function GhostLink({ href, className, children }: { href: string; className?: string; children: React.ReactNode }) {
+function GhostLink({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
     <Link
       href={href as any}
       className={[
-        "relative inline-flex h-11 items-center justify-center rounded-xl px-4 text-sm font-semibold",
-        "border border-border bg-card/60 text-foreground/90 hover:text-foreground",
+        "relative inline-flex h-11 items-center justify-center rounded-lg px-5 text-sm font-semibold",
+        "border border-border bg-card/60 text-foreground hover:bg-card hover:border-primary/40",
         "transition-all shadow-sm hover:shadow-md",
         className,
-      ].filter(Boolean).join(" ")}
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {children}
     </Link>

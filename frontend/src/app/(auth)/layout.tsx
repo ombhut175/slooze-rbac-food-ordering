@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun, GraduationCap, ArrowLeft } from "lucide-react";
+import { Moon, Sun, UtensilsCrossed, ArrowLeft } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import hackLog from "@/lib/logger";
 
@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
-      <div className="relative min-h-dvh bg-gradient-to-b from-white to-slate-50 text-slate-900 antialiased transition-colors duration-300 dark:from-[#0B1020] dark:to-[#0A0F1D] dark:text-slate-100">
+      <div className="relative min-h-dvh bg-gradient-to-b from-white via-orange-50 to-amber-50 text-slate-900 antialiased transition-colors duration-300 dark:from-[#1A0F0A] dark:via-[#120A06] dark:to-[#0A0805] dark:text-slate-100">
         {/* Background visuals */}
         <BackgroundAura />
 
@@ -48,28 +48,28 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 // Minimal header with just brand and theme toggle
 function Header() {
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-black/5 bg-white/70 backdrop-blur-md transition-colors dark:border-white/10 dark:bg-[#0B1020]/60">
+    <header className="sticky top-0 z-20 w-full border-b border-orange-200/50 bg-white/70 backdrop-blur-md transition-colors dark:border-orange-900/30 dark:bg-[#1A0F0A]/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
         
         {/* Back to Home + Brand */}
         <div className="flex items-center gap-4">
           <Link 
             href={ROUTES.HOME} 
-            className="group inline-flex items-center gap-2 text-sm text-slate-600 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+            className="group inline-flex items-center gap-2 text-sm text-orange-600 transition-colors hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
           
-          <div className="h-4 w-px bg-slate-200 dark:bg-slate-700" />
+          <div className="h-4 w-px bg-orange-200 dark:bg-orange-900/50" />
           
           <Link href={ROUTES.HOME} className="group inline-flex items-center gap-2">
-            <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-indigo-500 via-violet-500 to-fuchsia-500 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:scale-105 dark:ring-white/10">
-              <GraduationCap className="h-5 w-5 text-white drop-shadow" />
+            <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-tr from-red-500 via-orange-500 to-amber-500 shadow-sm ring-1 ring-black/5 transition-transform duration-200 group-hover:scale-105 dark:ring-white/10">
+              <UtensilsCrossed className="h-5 w-5 text-white drop-shadow" />
             </span>
             <div className="flex flex-col leading-tight">
-              <span className="text-base font-semibold tracking-tight">Quodo</span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">Learning Platform</span>
+              <span className="text-base font-semibold tracking-tight text-orange-700 dark:text-orange-100">FoodHub</span>
+              <span className="text-xs text-orange-600 dark:text-orange-400">Food Ordering</span>
             </div>
           </Link>
         </div>
@@ -93,7 +93,7 @@ function ModeToggle() {
       whileTap={{ scale: 0.96 }}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label="Toggle theme"
-      className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-black/10 bg-white/70 text-slate-700 shadow-sm transition-all hover:shadow-md dark:border-white/10 dark:bg-slate-900/60 dark:text-slate-200"
+      className="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-orange-200 bg-orange-50/70 text-orange-700 shadow-sm transition-all hover:shadow-md dark:border-orange-900/50 dark:bg-orange-950/60 dark:text-orange-200"
     >
       <motion.span
         key={isDark ? "dark" : "light"}
@@ -107,7 +107,7 @@ function ModeToggle() {
       </motion.span>
 
       {/* Glow */}
-      <span className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 [background:radial-gradient(120px_circle_at_var(--x,50%)_var(--y,50%),rgba(99,102,241,0.25),transparent_70%)] group-hover:opacity-100" />
+      <span className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 [background:radial-gradient(120px_circle_at_var(--x,50%)_var(--y,50%),rgba(229,57,53,0.25),transparent_70%)] group-hover:opacity-100" />
     </motion.button>
   );
 }
@@ -117,8 +117,8 @@ function BackgroundAura() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       {/* Soft radial gradient blobs */}
-      <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/30 to-fuchsia-400/20 blur-3xl dark:from-indigo-500/20 dark:to-fuchsia-500/10" />
-      <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-sky-400/25 to-emerald-400/20 blur-3xl dark:from-sky-500/15 dark:to-emerald-500/10" />
+      <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-red-400/30 to-orange-400/20 blur-3xl dark:from-red-600/20 dark:to-orange-600/10" />
+      <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/25 to-green-400/20 blur-3xl dark:from-amber-600/15 dark:to-green-600/10" />
 
       {/* Subtle grid pattern */}
       <div

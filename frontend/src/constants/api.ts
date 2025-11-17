@@ -5,14 +5,8 @@
  */
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-// Testing API Endpoints (relative URLs - prefix handled by apiClient)
+// API Endpoints (relative URLs - prefix handled by apiClient)
 export const API_ENDPOINTS = {
-  // Test endpoints
-  TESTING: {
-    DATA: 'test/testing', // 🚨 Relative URL - prefix added by apiClient
-    SUPABASE_STATUS: 'test/supabase-status', 
-    DATABASE_STATUS: 'test/database-status',
-  },
   
   // Auth endpoints (from existing constants)
   AUTH: {

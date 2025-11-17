@@ -5,7 +5,7 @@ import hackLog from '@/lib/logger';
 
 /**
  * Logger Initialization Component
- * Initializes Nexlog on the client side
+ * Initializes custom logger on the client side
  */
 export function LoggerInit() {
   useEffect(() => {

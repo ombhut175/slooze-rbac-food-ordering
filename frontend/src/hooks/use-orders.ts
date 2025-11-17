@@ -1,7 +1,7 @@
 /**
- * useOrders Hook
- * Fetches the list of orders with SWR caching
- * Automatically filtered by user's country on the backend (for non-admin users)
+ * useOrders Hook - COMPLETELY REWRITTEN
+ * Fetches ALL orders once and provides filtering utilities
+ * No complex cache key logic - simple and reliable
  */
 
 import useSWR from 'swr';
@@ -11,18 +11,29 @@ import { handleError } from '@/helpers/errors';
 import hackLog from '@/lib/logger';
 import type { Order } from '@/types/food-ordering';
 
+/**
+ * Simple hook that fetches ALL orders
+ * Filtering is handled by the component using this hook
+ */
 export function useOrders() {
-  hackLog.dev('useOrders hook initialized');
+  hackLog.dev('🪝 useOrders hook called', {
+    endpoint: API_ENDPOINTS.FOOD_ORDERING.ORDERS,
+    timestamp: new Date().toISOString(),
+  });
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR<Order[]>(
     API_ENDPOINTS.FOOD_ORDERING.ORDERS,
-    () => swrFetcher(API_ENDPOINTS.FOOD_ORDERING.ORDERS) as Promise<Order[]>,
+    async () => {
+      const result = await swrFetcher(API_ENDPOINTS.FOOD_ORDERING.ORDERS);
+      return result as Order[];
+    },
     {
-      revalidateOnFocus: true,
+      revalidateOnFocus: false,
       revalidateOnReconnect: true,
       onSuccess: (data) => {
         hackLog.apiSuccess('GET', API_ENDPOINTS.FOOD_ORDERING.ORDERS, {
-          count: data?.length || 0,
+          totalOrders: data?.length || 0,
+          orderStatuses: data?.map((o) => o.status) || [],
         });
       },
       onError: (err) => {
@@ -35,11 +46,17 @@ export function useOrders() {
     }
   );
 
+  hackLog.dev('🪝 useOrders result', {
+    isLoading,
+    hasData: !!data,
+    totalOrders: data?.length || 0,
+    hasError: !!error,
+  });
+
   return {
-    orders: data || [],
+    allOrders: data || [],
     isLoading,
     error,
-    isEmpty: !isLoading && (!data || data.length === 0),
     refetch: mutate,
   };
 }

@@ -19,8 +19,8 @@ if (typeof window === 'undefined') {
 }
 
 export const metadata: Metadata = {
-  title: "Quodo - Learning Platform",
-  description: "Accelerate your learning journey with personalized courses and expert mentorship",
+  title: "FoodHub - Food Delivery Platform",
+  description: "Order delicious food from your favorite local restaurants with fast delivery",
   generator: "v0.app"
 };
 
@@ -32,7 +32,7 @@ export default function RootLayout({
   return <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased overflow-x-hidden ${GeistSans.variable} ${GeistMono.variable}`}>
         <ErrorBoundary>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="quodo-theme">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="foodhub-theme">
             <AuthProvider>
               <LoggerInit />
               {children}

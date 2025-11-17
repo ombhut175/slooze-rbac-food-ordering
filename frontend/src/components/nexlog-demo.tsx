@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 /**
- * Nexlog Demonstration Component
+ * Logger Demonstration Component
  * Shows all hackLog methods in action for testing and documentation
  */
 export function NexlogDemo() {
@@ -18,18 +18,18 @@ export function NexlogDemo() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    hackLog.componentMount('NexlogDemo', {
+    hackLog.componentMount('LoggerDemo', {
       initialFormData: formData,
       timestamp: new Date().toISOString()
     });
 
     return () => {
-      hackLog.dev('NexlogDemo component unmounting');
+      hackLog.dev('LoggerDemo component unmounting');
     };
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
-    hackLog.componentUpdate('NexlogDemo', {
+    hackLog.componentUpdate('LoggerDemo', {
       field,
       oldValue: formData[field as keyof typeof formData],
       newValue: value
@@ -115,7 +115,7 @@ export function NexlogDemo() {
   };
 
   const testNavigationMethods = () => {
-    hackLog.routeChange('/demo', '/demo/nexlog');
+    hackLog.routeChange('/demo', '/demo/logger');
     setMessage('🧭 Navigation logged');
   };
 
@@ -151,12 +151,12 @@ export function NexlogDemo() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>🚀 Nexlog Integration Demo</CardTitle>
+          <CardTitle>🚀 Logger Integration Demo</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <AlertDescription>
-              This component demonstrates all Nexlog methods. Open DevTools Console to see the structured logs!
+              This component demonstrates all logger methods. Open DevTools Console to see the structured logs!
             </AlertDescription>
           </Alert>
 

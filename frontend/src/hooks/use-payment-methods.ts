@@ -45,6 +45,6 @@ export function usePaymentMethods() {
     isLoading,
     error,
     isEmpty: !isLoading && (!data || data.length === 0),
-    refetch: mutate,
+    refetch: () => mutate(undefined, { revalidate: true }),
   };
 }

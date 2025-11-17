@@ -6,10 +6,6 @@ export const SUCCESS_MESSAGES = {
   DATA_LOADED: '✅ Data loaded successfully!',
   API_CONNECTED: '✅ API connection successful!',
   REFRESH_SUCCESS: '✅ Data refreshed successfully!',
-  
-  // Testing/Debug operations
-  TEST_DATA_ADDED: '🧪 Test data added successfully!',
-  DATA_RESET: '🧹 Data reset successfully!',
   STATE_CLEARED: '🗑️ State cleared successfully!',
   
   // General operations
@@ -67,10 +63,10 @@ export const DEBUG_MESSAGES = {
   STORE_ACTION: '🏪 Store action dispatched',
 } as const;
 
-// Logging Messages (for Nexlog integration)
+// Logging Messages
 export const LOG_MESSAGES = {
   // Logger initialization
-  LOGGER_INITIALIZED: 'Nexlog logger initialized',
+  LOGGER_INITIALIZED: 'Logger initialized',
   LOGGER_CONFIG_LOADED: 'Logger configuration loaded',
   
   // Development logging

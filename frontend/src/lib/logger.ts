@@ -1,7 +1,7 @@
 /**
  * Custom Logger for Hackathon Development
  * Simple, effective logging compatible with Next.js
- * Replaces nexlog with a custom implementation
+ * Custom implementation for structured logging
  */
 
 // Logger configuration based on environment

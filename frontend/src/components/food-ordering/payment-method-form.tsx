@@ -227,9 +227,8 @@ export function PaymentMethodForm({
         hackLog.dev("Payment method updated successfully");
       }
 
-      // Close modal and refresh list
+      // Trigger success callback (which will refresh and close)
       onSuccess();
-      onClose();
     } catch (error: any) {
       hackLog.error("Failed to save payment method", {
         error: error.message,

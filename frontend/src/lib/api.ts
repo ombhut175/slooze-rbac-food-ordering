@@ -31,18 +31,12 @@ const fetcher = (url: string) => {
 
 export const api = {
   fetcher,
-  
-  // Testing endpoints
-  getTestingData: () => fetcher(`${API_BASE}/api/test/testing`),
-  getSupabaseStatus: () => fetcher(`${API_BASE}/api/test/supabase-status`),
-  getDatabaseStatus: () => fetcher(`${API_BASE}/api/test/database-status`),
+  // Add API methods here as needed
 }
 
 // API endpoints for SWR
 export const endpoints = {
-  testing: `${API_BASE}/api/test/testing`,
-  supabaseStatus: `${API_BASE}/api/test/supabase-status`,
-  databaseStatus: `${API_BASE}/api/test/database-status`,
+  // Add SWR endpoints here as needed
 }
 
 export { API_BASE }

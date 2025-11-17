@@ -47,7 +47,6 @@ interface OrderCardProps {
 }
 
 function OrderCard({ order, showCountry, onClick }: OrderCardProps) {
-  // Format date
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -56,7 +55,6 @@ function OrderCard({ order, showCountry, onClick }: OrderCardProps) {
     minute: "2-digit",
   });
 
-  // Truncate order ID for display
   const shortOrderId = order.id.substring(0, 8);
 
   return (
@@ -68,29 +66,20 @@ function OrderCard({ order, showCountry, onClick }: OrderCardProps) {
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          {/* Order ID */}
           <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
             Order #{shortOrderId}
           </p>
-
-          {/* Restaurant Name */}
           <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">
             {order.restaurant?.name || "Unknown Restaurant"}
           </h3>
-
-          {/* Country Badge (for ADMIN users) */}
           {showCountry && (
             <div className="mt-2">
               <CountryBadge country={order.country} size="sm" />
             </div>
           )}
         </div>
-
-        {/* Status Badge */}
         <StatusBadge status={order.status} size="md" />
       </div>
-
-      {/* Order Total and Date */}
       <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4 dark:border-slate-700">
         <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
           {formatCurrency(order.totalAmountCents, order.currency)}
@@ -221,25 +210,105 @@ function StatusFilterButtons({
   );
 }
 
+// No results for filter component
+interface NoFilterResultsProps {
+  statusFilter: StatusFilter;
+  onClearFilter: () => void;
+}
+
+function NoFilterResults({ statusFilter, onClearFilter }: NoFilterResultsProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+        <Filter className="h-10 w-10" />
+      </div>
+      <h3 className="mt-6 text-xl font-semibold text-slate-900 dark:text-slate-100">
+        No {statusFilter.toLowerCase()} orders
+      </h3>
+      <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
+        You don't have any orders with this status.
+      </p>
+      <button
+        onClick={onClearFilter}
+        className="mt-6 rounded-lg bg-orange-600 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-700"
+      >
+        View All Orders
+      </button>
+    </motion.div>
+  );
+}
+
 export default function OrdersPage() {
   const router = useRouter();
   const { user, publicUser } = useAuthStore();
   const { shouldRender } = useAuthProtection();
-  const { orders, isLoading, error, isEmpty, refetch } = useOrders();
-
-  // Status filter state
+  
+  // Local state for filter - this is the key to reliability
   const [statusFilter, setStatusFilter] = React.useState<StatusFilter>("ALL");
-
+  
   // Check if user is ADMIN
   const isAdmin = publicUser?.role === "ADMIN";
+  
+  // Fetch ALL orders once
+  const { allOrders, isLoading, error, refetch } = useOrders();
 
+  // Filter orders in component state - guaranteed to trigger re-renders
+  const displayedOrders = React.useMemo(() => {
+    hackLog.dev("🔄 Filtering orders", {
+      statusFilter,
+      totalOrders: allOrders.length,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (statusFilter === "ALL") {
+      return allOrders;
+    }
+    
+    const filtered = allOrders.filter((order) => order.status === statusFilter);
+    
+    hackLog.dev("✅ Orders filtered", {
+      statusFilter,
+      totalOrders: allOrders.length,
+      filteredCount: filtered.length,
+      timestamp: new Date().toISOString(),
+    });
+    
+    return filtered;
+  }, [allOrders, statusFilter]);
+
+  // Calculate order counts for filter buttons
+  const orderCounts = React.useMemo(() => {
+    const counts: Record<StatusFilter, number> = {
+      ALL: allOrders.length,
+      DRAFT: 0,
+      PENDING: 0,
+      PAID: 0,
+      CANCELED: 0,
+    };
+
+    allOrders.forEach((order) => {
+      counts[order.status] = (counts[order.status] || 0) + 1;
+    });
+
+    hackLog.dev("📊 Order counts calculated", {
+      counts,
+      timestamp: new Date().toISOString(),
+    });
+
+    return counts;
+  }, [allOrders]);
+
+  // Component mount logging
   React.useEffect(() => {
     hackLog.componentMount("OrdersPage", {
       hasUser: !!user,
       userId: user?.id,
       userRole: publicUser?.role,
-      userCountry: publicUser?.country,
-      isAuthenticated: !!user,
       isAdmin,
       timestamp: new Date().toISOString(),
     });
@@ -251,30 +320,16 @@ export default function OrdersPage() {
     };
   }, [user, publicUser, isAdmin]);
 
-  // Filter orders by status
-  const filteredOrders = React.useMemo(() => {
-    if (statusFilter === "ALL") {
-      return orders;
-    }
-    return orders.filter((order) => order.status === statusFilter);
-  }, [orders, statusFilter]);
-
-  // Calculate order counts for each status
-  const orderCounts = React.useMemo(() => {
-    const counts: Record<StatusFilter, number> = {
-      ALL: orders.length,
-      DRAFT: 0,
-      PENDING: 0,
-      PAID: 0,
-      CANCELED: 0,
-    };
-
-    orders.forEach((order) => {
-      counts[order.status] = (counts[order.status] || 0) + 1;
+  // Log filter changes
+  React.useEffect(() => {
+    hackLog.dev("📊 OrdersPage state", {
+      statusFilter,
+      displayedOrdersCount: displayedOrders.length,
+      allOrdersCount: allOrders.length,
+      isLoading,
+      timestamp: new Date().toISOString(),
     });
-
-    return counts;
-  }, [orders]);
+  }, [statusFilter, displayedOrders.length, allOrders.length, isLoading]);
 
   // Handle order click
   const handleOrderClick = (orderId: string) => {
@@ -288,12 +343,13 @@ export default function OrdersPage() {
 
   // Handle filter change
   const handleFilterChange = (filter: StatusFilter) => {
-    hackLog.dev("User changed order filter", {
+    hackLog.dev("🔄 User changing order filter", {
       previousFilter: statusFilter,
       newFilter: filter,
       userId: user?.id,
       timestamp: new Date().toISOString(),
     });
+    
     setStatusFilter(filter);
   };
 
@@ -322,10 +378,8 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
-      {/* App Navigation */}
       <AppNavigation />
 
-      {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -343,7 +397,7 @@ export default function OrdersPage() {
           </div>
 
           {/* Status Filter Buttons */}
-          {!isLoading && !error && !isEmpty && (
+          {!isLoading && !error && allOrders.length > 0 && (
             <div className="mb-6">
               <StatusFilterButtons
                 activeFilter={statusFilter}
@@ -367,41 +421,24 @@ export default function OrdersPage() {
             <ErrorState error={error} onRetry={handleRetry} />
           )}
 
-          {/* Empty State */}
-          {!isLoading && !error && isEmpty && <EmptyState />}
+          {/* Empty State - no orders at all */}
+          {!isLoading && !error && allOrders.length === 0 && <EmptyState />}
 
-          {/* No Results for Filter */}
+          {/* No Results for Filter - orders exist but filter returns none */}
           {!isLoading &&
             !error &&
-            !isEmpty &&
-            filteredOrders.length === 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex flex-col items-center justify-center py-16"
-              >
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400">
-                  <Filter className="h-10 w-10" />
-                </div>
-                <h3 className="mt-6 text-xl font-semibold text-slate-900 dark:text-slate-100">
-                  No {statusFilter.toLowerCase()} orders
-                </h3>
-                <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
-                  You don't have any orders with this status.
-                </p>
-                <button
-                  onClick={() => setStatusFilter("ALL")}
-                  className="mt-6 rounded-lg bg-orange-600 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-700"
-                >
-                  View All Orders
-                </button>
-              </motion.div>
+            allOrders.length > 0 &&
+            displayedOrders.length === 0 && (
+              <NoFilterResults
+                statusFilter={statusFilter}
+                onClearFilter={() => setStatusFilter("ALL")}
+              />
             )}
 
           {/* Orders Grid */}
-          {!isLoading && !error && filteredOrders.length > 0 && (
+          {!isLoading && !error && displayedOrders.length > 0 && (
             <motion.div
+              key={`orders-${statusFilter}-${displayedOrders.length}`}
               initial="hidden"
               animate="visible"
               variants={{
@@ -413,7 +450,7 @@ export default function OrdersPage() {
               }}
               className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {filteredOrders.map((order) => (
+              {displayedOrders.map((order) => (
                 <motion.div
                   key={order.id}
                   variants={{

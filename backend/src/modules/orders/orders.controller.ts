@@ -109,12 +109,13 @@ export class OrdersController {
    * Get all orders accessible to the authenticated user
    * ADMIN users see all orders
    * MANAGER and MEMBER users see only orders in their country
+   * Optional status filter to get orders by specific status
    */
   @Get()
   @ApiOperation({
     summary: 'Get all orders',
     description:
-      'Returns orders based on user role. ADMIN users see all orders, MANAGER and MEMBER users see only orders in their country.',
+      'Returns orders based on user role. ADMIN users see all orders, MANAGER and MEMBER users see only orders in their country. Optional status query parameter to filter by order status.',
   })
   @ApiResponse({
     status: 200,

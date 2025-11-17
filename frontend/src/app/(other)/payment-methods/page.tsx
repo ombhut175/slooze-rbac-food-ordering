@@ -309,13 +309,16 @@ export default function PaymentMethodsPage() {
   };
 
   // Handle form success
-  const handleFormSuccess = () => {
+  const handleFormSuccess = async () => {
     hackLog.dev("Payment method form submitted successfully", {
       mode: formMode,
       timestamp: new Date().toISOString(),
     });
-    // Refresh the list
-    refetch();
+    // Force refresh the list by calling mutate with revalidate
+    await refetch();
+    // Close form after data is refreshed
+    setIsFormOpen(false);
+    setSelectedPaymentMethod(null);
   };
 
   // Handle form close

@@ -5,8 +5,7 @@ export const ROUTES = {
   // Main pages
   HOME: '/',
   DASHBOARD: '/dashboard',
-  NEXLOG: '/nexlog',
-  TESTING: '/testing',
+  PROFILE: '/profile',
   
   // Auth routes (using Next.js route groups)
   AUTH: {
@@ -28,13 +27,6 @@ export const ROUTES = {
   
   // Style guide and docs
   STYLEGUIDE: '/styleguide',
-  
-  // API routes (for external linking/reference)
-  API: {
-    TESTING: '/api/test/testing',
-    SUPABASE_STATUS: '/api/test/supabase-status',
-    DATABASE_STATUS: '/api/test/database-status',
-  }
 } as const;
 
 // Navigation items for main authenticated app (post-login)
@@ -43,18 +35,6 @@ export const NAV_ITEMS = [
     title: 'Dashboard',
     href: ROUTES.DASHBOARD,
     icon: 'home',
-    adminOnly: false,
-  },
-  {
-    title: 'Nexlog',
-    href: ROUTES.NEXLOG,
-    icon: 'activity',
-    adminOnly: false,
-  },
-  {
-    title: 'Testing Dashboard',
-    href: ROUTES.TESTING,
-    icon: 'beaker',
     adminOnly: false,
   },
   {
@@ -76,9 +56,9 @@ export const NAV_ITEMS = [
     adminOnly: true,
   },
   {
-    title: 'Style Guide',
-    href: ROUTES.STYLEGUIDE,
-    icon: 'palette',
+    title: 'Profile',
+    href: ROUTES.PROFILE,
+    icon: 'user',
     adminOnly: false,
   },
 ] as const;
@@ -100,6 +80,6 @@ export const AUTH_NAV_ITEMS = [
 ] as const;
 
 // Type definitions
-export type RouteValue = typeof ROUTES[keyof typeof ROUTES] | typeof ROUTES.AUTH[keyof typeof ROUTES.AUTH] | typeof ROUTES.API[keyof typeof ROUTES.API];
+export type RouteValue = typeof ROUTES[keyof typeof ROUTES] | typeof ROUTES.AUTH[keyof typeof ROUTES.AUTH];
 export type NavItem = typeof NAV_ITEMS[number];
 export type AuthNavItem = typeof AUTH_NAV_ITEMS[number];

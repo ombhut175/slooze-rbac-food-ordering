@@ -199,6 +199,47 @@ export default function RestaurantsPage() {
             <p className="mt-2 text-orange-600 dark:text-orange-300">
               Browse restaurants and discover delicious food options
             </p>
+            
+            {/* User Role and Country Info */}
+            {publicUser && publicUser.role !== 'ADMIN' && (
+              <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                    <Utensils className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                      You are a <span className="font-bold">{publicUser.role}</span> in{" "}
+                      <span className="font-bold">
+                        {publicUser.country === "IN" ? "🇮🇳 India" : "🇺🇸 United States"}
+                      </span>
+                    </p>
+                    <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+                      You can only see restaurants available in your country. Admins can view restaurants from all countries.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Admin Info */}
+            {publicUser && publicUser.role === 'ADMIN' && (
+              <div className="mt-4 rounded-lg border border-purple-200 bg-purple-50 p-4 dark:border-purple-800 dark:bg-purple-900/20">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+                    <Utensils className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                      You are an <span className="font-bold">ADMIN</span>
+                    </p>
+                    <p className="mt-1 text-xs text-purple-700 dark:text-purple-300">
+                      You can view restaurants from all countries (🇮🇳 India and 🇺🇸 United States).
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Loading State */}

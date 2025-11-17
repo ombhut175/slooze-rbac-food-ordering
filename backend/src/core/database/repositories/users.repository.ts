@@ -7,17 +7,23 @@ import { MESSAGES } from '../../../common/constants/string-const';
 export interface CreateUserDto {
   id?: string; // UUID id (optional, will be auto-generated if not provided)
   email: string;
+  role?: 'ADMIN' | 'MANAGER' | 'MEMBER';
+  country?: 'IN' | 'US';
   isEmailVerified?: boolean;
 }
 
 export interface UpdateUserDto {
   email?: string;
+  role?: 'ADMIN' | 'MANAGER' | 'MEMBER';
+  country?: 'IN' | 'US';
   isEmailVerified?: boolean;
 }
 
 export interface UserEntity {
   id: string; // UUID
   email: string;
+  role: 'ADMIN' | 'MANAGER' | 'MEMBER';
+  country: 'IN' | 'US';
   isEmailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -36,6 +42,8 @@ export class UsersRepository extends BaseRepository<UserEntity> {
         .values({
           id: userData.id, // Use provided UUID or let DB generate one
           email: userData.email,
+          role: userData.role || 'MEMBER',
+          country: userData.country || 'IN',
           isEmailVerified: userData.isEmailVerified || false,
         })
         .returning();
@@ -96,6 +104,14 @@ export class UsersRepository extends BaseRepository<UserEntity> {
 
       if (userData.email !== undefined) {
         updateData.email = userData.email;
+      }
+
+      if (userData.role !== undefined) {
+        updateData.role = userData.role;
+      }
+
+      if (userData.country !== undefined) {
+        updateData.country = userData.country;
       }
 
       if (userData.isEmailVerified !== undefined) {

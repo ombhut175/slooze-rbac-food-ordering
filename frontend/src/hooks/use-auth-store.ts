@@ -71,7 +71,11 @@ export const useAuthStore = create<AuthState>()(
           trigger: 'user_action'
         });
 
+        // Clear any existing user data first to prevent stale data
         set({ 
+          user: null,
+          publicUser: null,
+          isAuthenticated: false,
           isLoginLoading: true, 
           loginError: null,
           generalError: null 
@@ -83,10 +87,13 @@ export const useAuthStore = create<AuthState>()(
           hackLog.storeAction('loginSuccess', {
             userId: response.user.id,
             email: response.user.email,
+            role: response.publicUser.role,
+            country: response.publicUser.country,
             isEmailVerified: response.isEmailVerified,
             hasTokens: !!response.tokens
           });
 
+          // Set new user data
           set({
             user: response.user,
             publicUser: response.publicUser,
@@ -95,6 +102,13 @@ export const useAuthStore = create<AuthState>()(
             isLoginLoading: false,
             loginError: null,
             generalError: null
+          });
+
+          // Force localStorage update
+          hackLog.dev('User data updated in store', {
+            userId: response.user.id,
+            role: response.publicUser.role,
+            country: response.publicUser.country,
           });
 
           return true;
@@ -230,6 +244,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async (): Promise<void> => {
         hackLog.storeAction('logout', {
           userId: get().user?.id,
+          userRole: get().publicUser?.role,
           trigger: 'user_action'
         });
 
@@ -243,6 +258,14 @@ export const useAuthStore = create<AuthState>()(
           });
 
           get().clearUserData();
+          
+          // Force clear localStorage to prevent stale data
+          try {
+            localStorage.removeItem('auth-store');
+            hackLog.dev('LocalStorage auth-store cleared');
+          } catch (e) {
+            hackLog.warn('Failed to clear localStorage', { error: e });
+          }
         } catch (error: any) {
           hackLog.error('Logout failed', {
             error: error.message,
@@ -252,6 +275,14 @@ export const useAuthStore = create<AuthState>()(
 
           // Clear user data even if API call fails
           get().clearUserData();
+          
+          // Force clear localStorage even on error
+          try {
+            localStorage.removeItem('auth-store');
+            hackLog.dev('LocalStorage auth-store cleared (after error)');
+          } catch (e) {
+            hackLog.warn('Failed to clear localStorage', { error: e });
+          }
         }
       },
 

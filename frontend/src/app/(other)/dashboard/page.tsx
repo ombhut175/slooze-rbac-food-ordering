@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { User, Mail, Calendar, Shield, ShoppingBag, MapPin, Clock, Star, TrendingUp } from "lucide-react";
+import { User, Mail, Calendar, Shield } from "lucide-react";
 import { useAuthUser } from "@/hooks/use-auth-store";
 import { useAuthProtection } from "@/components/auth/auth-provider";
 import { AppNavigation } from "@/components/app-navigation";

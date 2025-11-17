@@ -11,7 +11,7 @@ import hackLog from '@/lib/logger';
  */
 export default function LoggerDemo() {
   const [count, setCount] = useState(0);
-  const [user, _setUser] = useState({ name: 'John Doe', email: 'john@example.com', role: 'admin' });
+  const [user] = useState({ name: 'John Doe', email: 'john@example.com', role: 'admin' });
 
   useEffect(() => {
     hackLog.componentMount('LoggerDemo', { initialCount: count });

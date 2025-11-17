@@ -6,10 +6,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import basicAuth from 'express-basic-auth';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ENV } from './common/constants/string-const';
 import cookieParser from 'cookie-parser';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -65,9 +65,22 @@ async function bootstrap() {
       logger.log(`CORS enabled for ${nodeEnv} (origin: ${frontendUrl})`);
     }
 
-    // Global exception filter
-    app.useGlobalFilters(new HttpExceptionFilter());
+    // Global exception filter (catches all exceptions including non-HTTP)
+    app.useGlobalFilters(new AllExceptionsFilter());
     logger.log('Global exception filter applied');
+
+    // Global validation pipe for DTO validation
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true, // Strip properties that don't have decorators
+        forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
+        transform: true, // Automatically transform payloads to DTO instances
+        transformOptions: {
+          enableImplicitConversion: true, // Allow implicit type conversion
+        },
+      }),
+    );
+    logger.log('Global validation pipe applied');
 
     // Swagger configuration (only in non-production environments unless explicitly disabled)
     const swaggerEnabled =

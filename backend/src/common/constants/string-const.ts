@@ -38,11 +38,19 @@ export enum MESSAGES {
   NOT_FOUND = 'Resource not found',
   UNAUTHORIZED = 'Unauthorized',
   FORBIDDEN = 'Forbidden',
+  INTERNAL_SERVER_ERROR = 'Internal server error',
 
   // Auth
   INVALID_TOKEN = 'Invalid token',
   TOKEN_EXPIRED = 'Token expired',
+  NO_TOKEN_PROVIDED = 'No authorization token provided',
+  INVALID_OR_EXPIRED_TOKEN = 'Invalid or expired token',
   USER_NOT_FOUND = 'User not found',
+  USER_NOT_FOUND_IN_DATABASE = 'User not found in database',
+  USER_ROLE_NOT_FOUND = 'User role not found',
+  AUTHENTICATION_FAILED = 'Authentication failed',
+  ACCESS_DENIED = 'Access denied',
+  ACCESS_DENIED_ROLE_REQUIRED = 'Access denied: Required role(s)',
   TASK_NOT_FOUND = 'Task not found',
   LOGIN_SUCCESSFUL = 'Login successful',
   SIGNUP_SUCCESSFUL = 'Account created successfully',
@@ -51,6 +59,20 @@ export enum MESSAGES {
   EMAIL_ALREADY_EXISTS = 'Email already exists',
   WEAK_PASSWORD = 'Password is too weak',
   INVALID_EMAIL = 'Invalid email format',
+
+  // Food Ordering
+  RESTAURANT_NOT_FOUND = 'Restaurant not found',
+  ORDER_NOT_FOUND = 'Order not found',
+  ORDER_ITEM_NOT_FOUND = 'Order item not found',
+  ORDER_NOT_DRAFT = 'Order is not in DRAFT status and cannot be modified',
+  ORDER_INVALID_STATUS_FOR_CHECKOUT = 'Order status must be DRAFT or PENDING for checkout',
+  ORDER_EMPTY = 'Order must have at least one item before checkout',
+  MENU_ITEM_NOT_FOUND = 'Menu item not found',
+  MENU_ITEM_NOT_AVAILABLE = 'Menu item is not available',
+  MENU_ITEM_WRONG_RESTAURANT = 'Menu item does not belong to the order restaurant',
+  PAYMENT_METHOD_NOT_FOUND = 'Payment method not found',
+  PAYMENT_NOT_FOUND = 'Payment not found',
+  PAYMENT_FAILED = 'Payment processing failed',
 
   // Supabase
   SUPABASE_CONNECTION_ERROR = 'Failed to connect to database',
@@ -82,4 +104,17 @@ export enum QUEUES {
 // Cookie Keys
 export enum COOKIES {
   AUTH_TOKEN = 'auth_token',
+}
+
+// User Roles
+export enum USER_ROLES {
+  ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
+  MEMBER = 'MEMBER',
+}
+
+// Country Codes
+export enum COUNTRY_CODES {
+  IN = 'IN',
+  US = 'US',
 }

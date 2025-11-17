@@ -8,6 +8,9 @@ import { DatabaseModule } from './core/database/database.module';
 import { TestModule } from './modules/test/test.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthCheckModule } from './modules/health-check/health-check.module';
+import { RestaurantsModule } from './modules/restaurants/restaurants.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { PaymentMethodsModule } from './modules/payment-methods/payment-methods.module';
 import { envValidationSchema } from './config/env.validation';
 
 @Module({
@@ -26,6 +29,9 @@ import { envValidationSchema } from './config/env.validation';
     TestModule,
     AuthModule,
     HealthCheckModule,
+    RestaurantsModule,
+    OrdersModule,
+    PaymentMethodsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

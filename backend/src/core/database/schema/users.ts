@@ -1,10 +1,13 @@
-import { pgTable, text, timestamp, uuid, pgEnum, boolean } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  pgEnum,
+  boolean,
+} from 'drizzle-orm/pg-core';
 
-export const userRoleEnum = pgEnum('user_role', [
-  'ADMIN',
-  'MANAGER',
-  'MEMBER',
-]);
+export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'MANAGER', 'MEMBER']);
 
 export const countryCodeEnum = pgEnum('country_code', ['IN', 'US']);
 

@@ -1,41 +1,48 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# RBAC Food Ordering Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A Role-Based Access Control (RBAC) food ordering system built with NestJS, Drizzle ORM, and Supabase Auth. The system implements country-scoped access control with three user roles: ADMIN, MANAGER, and MEMBER.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
+
+- **Role-Based Access Control**: Three user roles (ADMIN, MANAGER, MEMBER) with different permissions
+- **Country-Scoped Access**: Data isolation based on user's assigned country (India or United States)
+- **Restaurant Management**: Browse restaurants and menus with country-based filtering
+- **Order Management**: Create, manage, checkout, and cancel orders
+- **Mock Payment Processing**: Database-only payment simulation for testing
+- **Payment Method Management**: ADMIN-controlled payment method configuration
+- **Comprehensive API Documentation**: Swagger/OpenAPI documentation at `/api/docs`
+
+## Technology Stack
+
+- **Framework**: NestJS with TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Supabase Auth
+- **Validation**: class-validator and class-transformer
+- **Documentation**: Swagger/OpenAPI
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This backend API implements a complete food ordering system with role-based access control and country-scoped data access.
 
-## Project setup
+## Quick Start
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- PostgreSQL database
+- Supabase account
+
+### Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Configuration
 
-### Environment Variables
+### Environment Variables Setup
 
-This project uses environment variables with a priority system for configuration:
+This project uses environment variables with a priority system for configuration.
 
 **Priority Order:**
 1. **`.env.local`** (highest priority - local development overrides)
@@ -44,105 +51,328 @@ This project uses environment variables with a priority system for configuration
 **Setup Instructions:**
 
 ```bash
-# For shared/team configuration (optional fallback)
-cp env.example.txt .env
+# Copy the example file to create your environment configuration
+cp env.example.txt .env.local
 
-# For local development overrides (recommended)
-cp env.local.example .env.local
-
-# Edit the files with your actual values
+# Edit .env.local with your actual values
 ```
-
-**Why this priority system?**
-- `.env.local` allows developers to have local overrides without affecting team configuration
-- `.env` serves as a fallback for shared settings
-- `.env.local` is automatically ignored by git (recommended for local development)
 
 **Required Environment Variables:**
 
-- `SUPABASE_URL`: Your Supabase project URL
-- `SUPABASE_ANON_KEY`: Your Supabase anonymous key
-- `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key
-- `NODE_ENV`: Environment (development/production/test)
-- `PORT`: Server port (default: 3000)
+```bash
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# Database Configuration
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+FRONTEND_URL=http://localhost:3656
+REDIRECT_TO_FRONTEND_URL=http://localhost:3656/login
+```
 
 **Optional Environment Variables:**
 
-- `SWAGGER_USER`: Username for Swagger documentation access
-- `SWAGGER_PASSWORD`: Password for Swagger documentation access
+```bash
+# Swagger / API Docs Protection
+SWAGGER_USER=admin
+SWAGGER_PASSWORD=super-secure-password
+```
 
 ### Supabase Setup
 
 1. Create a Supabase project at [supabase.com](https://supabase.com)
-2. Get your project URL and keys from the project settings
-3. Update your `.env` file with the actual values
+2. Get your project URL and keys from Project Settings → API
+3. Update your `.env.local` file with the actual values
+4. Ensure your PostgreSQL database is accessible
 
-### Swagger Documentation
+## Database Setup
 
-API documentation is available at `/api` when running in development mode.
+### Run Migrations
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
+Generate and apply database migrations:
 
 ```bash
-# unit tests
-$ npm run test
+# Generate migration files from schema
+npm run db:generate
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Apply migrations to database
+npm run db:migrate
 ```
 
-## Deployment
+### Seed Database
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Populate the database with test data:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run db:seed
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+This will create:
+- 6 test user accounts (see Test Accounts section below)
+- 6 restaurants (3 in India, 3 in United States)
+- Menu items for each restaurant
+- 2 mock payment methods
+
+## Running the Application
+
+### Development Mode
+
+```bash
+npm run start:dev
+```
+
+The API will be available at `http://localhost:3000`
+
+### Production Mode
+
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm run start:prod
+```
+
+### Other Run Commands
+
+```bash
+# Standard start
+npm run start
+
+# Debug mode
+npm run start:debug
+```
+
+## Test Accounts
+
+All test accounts use the password: **Password123!**
+
+| Name              | Email                          | Role    | Country |
+|-------------------|--------------------------------|---------|---------|
+| Nick              | nick@example.com               | ADMIN   | IN      |
+| Captain Marvel    | captain.marvel@example.com     | MANAGER | IN      |
+| Captain America   | captain.america@example.com    | MANAGER | US      |
+| Thanos            | thanos@example.com             | MEMBER  | IN      |
+| Thor              | thor@example.com               | MEMBER  | IN      |
+| Travis            | travis@example.com             | MEMBER  | US      |
+
+### Role Permissions
+
+- **ADMIN**: Full access to all resources across all countries, can manage payment methods
+- **MANAGER**: Can checkout and cancel orders, access restricted to their country
+- **MEMBER**: Can browse and create orders, access restricted to their country, cannot checkout or cancel
+
+## API Documentation
+
+### Swagger UI
+
+Interactive API documentation is available at:
+
+```
+http://localhost:3000/api/docs
+```
+
+### Comprehensive API Guide
+
+See [RBAC_API.md](./RBAC_API.md) for detailed API documentation including:
+- All endpoint specifications
+- Request/response examples
+- Authentication requirements
+- Role-based access control rules
+- Error handling
+- Complete cURL examples
+
+## Testing
+
+### Run Unit Tests
+
+```bash
+npm test
+```
+
+### Run E2E Tests
+
+```bash
+npm run test:e2e
+```
+
+### Run Tests with Coverage
+
+```bash
+npm run test:cov
+```
+
+### Run Tests in Watch Mode
+
+```bash
+npm run test:watch
+```
+
+## Code Quality
+
+### Validation
+
+Run type checking and linting together:
+
+```bash
+npm run validate
+```
+
+This runs:
+- TypeScript type checking (`npm run type-check`)
+- ESLint linting (`npm run lint:check`)
+
+### Type Checking
+
+```bash
+# Standard type check
+npm run type-check
+
+# Strict type check
+npm run type-check:strict
+```
+
+### Linting
+
+```bash
+# Check for linting errors
+npm run lint:check
+
+# Fix linting errors automatically
+npm run lint
+
+# Strict linting (no warnings allowed)
+npm run lint:strict
+```
+
+### Code Formatting
+
+```bash
+npm run format
+```
+
+## Database Management
+
+### Drizzle Studio
+
+Launch Drizzle Studio to visually manage your database:
+
+```bash
+npm run db:studio
+```
+
+### Push Schema Changes
+
+Push schema changes directly to database (development only):
+
+```bash
+npm run db:push
+```
+
+## Project Structure
+
+```
+backend/
+├── src/
+│   ├── common/              # Shared utilities, guards, decorators
+│   │   ├── guards/          # AuthGuard, RolesGuard
+│   │   ├── decorators/      # @Roles(), @CurrentUser()
+│   │   ├── filters/         # Exception filters
+│   │   └── interfaces/      # Shared interfaces
+│   ├── core/
+│   │   └── database/        # Database configuration and repositories
+│   │       ├── schema/      # Drizzle schema definitions
+│   │       └── repositories/# Data access layer
+│   ├── modules/
+│   │   ├── restaurants/     # Restaurant and menu endpoints
+│   │   ├── orders/          # Order management endpoints
+│   │   └── payment-methods/ # Payment method endpoints
+│   └── main.ts              # Application entry point
+├── scripts/
+│   └── seed.ts              # Database seeding script
+├── test/                    # E2E tests
+└── drizzle/                 # Migration files
+```
+
+## Key Features Implementation
+
+### Authentication Flow
+
+1. User authenticates with Supabase Auth to get access token
+2. Access token sent in Authorization header: `Bearer <token>`
+3. AuthGuard validates token with Supabase Auth API
+4. User details (role, country) fetched from database
+5. User context attached to request for downstream use
+
+### Authorization Flow
+
+1. RolesGuard checks endpoint role requirements from @Roles() decorator
+2. Compares user role against required roles
+3. Returns 403 Forbidden if user lacks required role
+4. Allows request to proceed if authorized
+
+### Country Scoping
+
+- ADMIN users: See all data from all countries
+- MANAGER users: See only data from their assigned country
+- MEMBER users: See only data from their assigned country
+- Orders automatically assigned to user's country on creation
+
+### Mock Payment Processing
+
+- No external payment API integration
+- All payment processing simulated in database
+- Payment methods stored with provider='MOCK'
+- Payments always succeed unless validation fails
+- Useful for testing without real payment setup
+
+## Troubleshooting
+
+### Database Connection Issues
+
+- Verify DATABASE_URL is correct in .env.local
+- Ensure PostgreSQL is running
+- Check database credentials and permissions
+
+### Supabase Authentication Issues
+
+- Verify SUPABASE_URL and keys are correct
+- Ensure Supabase project is active
+- Check that users exist in Supabase Auth
+
+### Migration Issues
+
+- Run `npm run db:generate` before `npm run db:migrate`
+- Check migration files in drizzle/ directory
+- Verify database schema matches expectations
+
+### Seed Script Issues
+
+- Ensure migrations are applied first
+- Check that Supabase service role key has admin permissions
+- Verify DATABASE_URL points to correct database
+
+## Development Workflow
+
+1. **Setup**: Install dependencies and configure environment variables
+2. **Database**: Run migrations and seed data
+3. **Development**: Start dev server with `npm run start:dev`
+4. **Testing**: Write and run tests with `npm test`
+5. **Validation**: Run `npm run validate` before committing
+6. **Documentation**: Update API docs and README as needed
 
 ## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Drizzle ORM Documentation](https://orm.drizzle.team)
+- [Supabase Documentation](https://supabase.com/docs)
+- [API Documentation](./RBAC_API.md)
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.

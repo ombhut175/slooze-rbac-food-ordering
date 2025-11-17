@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { SupabaseService } from '../../core/supabase/supabase.service';
-import { COOKIES } from '../constants/string-const';
+import { UsersRepository } from '../../core/database/repositories/users.repository';
+import { COOKIES, MESSAGES } from '../constants/string-const';
 
 /**
  * AuthGuard that validates Supabase tokens and attaches user info to request
@@ -17,7 +18,10 @@ import { COOKIES } from '../constants/string-const';
 export class AuthGuard implements CanActivate {
   private readonly logger = new Logger(AuthGuard.name);
 
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -52,7 +56,7 @@ export class AuthGuard implements CanActivate {
               : 'missing',
           },
         });
-        throw new UnauthorizedException('No authorization token provided');
+        throw new UnauthorizedException(MESSAGES.NO_TOKEN_PROVIDED);
       }
 
       this.logger.debug('Token extracted successfully', {
@@ -79,13 +83,29 @@ export class AuthGuard implements CanActivate {
           authTime: `${authTime}ms`,
           timestamp: new Date().toISOString(),
         });
-        throw new UnauthorizedException('Invalid or expired token');
+        throw new UnauthorizedException(MESSAGES.INVALID_OR_EXPIRED_TOKEN);
       }
 
-      // Attach user info to request
+      // Fetch user from database to get role and country
+      const dbUser = await this.usersRepository.findById(user.id);
+
+      if (!dbUser) {
+        this.logger.error('User not found in database', {
+          operation: 'findById',
+          requestId,
+          userId: user.id,
+          email: user.email,
+          timestamp: new Date().toISOString(),
+        });
+        throw new UnauthorizedException(MESSAGES.USER_NOT_FOUND_IN_DATABASE);
+      }
+
+      // Attach user info to request with role and country
       (request as any).user = {
         id: user.id,
         email: user.email,
+        role: dbUser.role,
+        country: dbUser.country,
         supabaseUser: user, // Full user object for advanced use cases
       };
 
@@ -94,6 +114,8 @@ export class AuthGuard implements CanActivate {
         requestId,
         userId: user.id,
         email: user.email,
+        role: dbUser.role,
+        country: dbUser.country,
         authTime: `${authTime}ms`,
         userMetadata: {
           emailVerified: user.email_confirmed_at ? true : false,
@@ -130,7 +152,7 @@ export class AuthGuard implements CanActivate {
         throw error;
       }
 
-      throw new UnauthorizedException('Authentication failed');
+      throw new UnauthorizedException(MESSAGES.AUTHENTICATION_FAILED);
     }
   }
 

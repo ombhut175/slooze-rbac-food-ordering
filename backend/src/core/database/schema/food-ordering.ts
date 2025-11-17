@@ -66,9 +66,7 @@ export const menuItems = pgTable(
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
   },
   (table) => ({
-    restaurantIdx: index('idx_menu_items_restaurant').on(
-      table.restaurantId,
-    ),
+    restaurantIdx: index('idx_menu_items_restaurant').on(table.restaurantId),
     availableIdx: index('idx_menu_items_available').on(table.available),
     priceCentsCheck: sql`CHECK (price_cents >= 0)`,
   }),
@@ -86,9 +84,7 @@ export const orders = pgTable(
       .references(() => restaurants.id, { onDelete: 'restrict' }),
     country: countryCodeEnum('country').notNull(),
     status: orderStatusEnum('status').notNull().default('DRAFT'),
-    totalAmountCents: integer('total_amount_cents')
-      .notNull()
-      .default(0),
+    totalAmountCents: integer('total_amount_cents').notNull().default(0),
     currency: char('currency', { length: 3 }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),

@@ -19,6 +19,18 @@ export interface AuthenticatedRequest extends Request {
     email: string;
 
     /**
+     * User's role for authorization
+     * @example "ADMIN" | "MANAGER" | "MEMBER"
+     */
+    role: 'ADMIN' | 'MANAGER' | 'MEMBER';
+
+    /**
+     * User's country for data scoping
+     * @example "IN" | "US"
+     */
+    country: 'IN' | 'US';
+
+    /**
      * Full Supabase user object for advanced use cases
      * Contains all user metadata, auth info, etc.
      */

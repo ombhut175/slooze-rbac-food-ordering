@@ -77,7 +77,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Add response interceptor for logging while preserving original error shape
+// Add response interceptor for logging and auth error handling
 apiClient.interceptors.response.use(
   (response) => {
     console.log("API Response:", {
@@ -91,6 +91,43 @@ apiClient.interceptors.response.use(
     // Log and pass through so downstream interceptors/handlers can decide
     if (error.response) {
       console.error("API Error Response:", error.response.status, error.response.data);
+      
+      // Handle 401 Unauthorized - redirect to login
+      if (error.response.status === 401) {
+        hackLog.error('Unauthorized access - redirecting to login', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: 401,
+        });
+        
+        // Only redirect if we're in the browser
+        if (typeof window !== 'undefined') {
+          // Clear auth state - use dynamic import to avoid circular dependency
+          import('@/hooks/use-auth-store').then(({ useAuthStore }) => {
+            if (useAuthStore && useAuthStore.getState) {
+              useAuthStore.getState().clearUserData();
+            }
+          }).catch(() => {
+            // Ignore import errors
+          });
+          
+          // Redirect to login page
+          const currentPath = window.location.pathname;
+          if (currentPath !== '/login' && currentPath !== '/signup') {
+            window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+          }
+        }
+      }
+      
+      // Handle 403 Forbidden - log permission error
+      if (error.response.status === 403) {
+        hackLog.error('Forbidden access - insufficient permissions', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: 403,
+          message: error.response.data?.message || 'You do not have permission to perform this action',
+        });
+      }
     } else if (error.request) {
       console.error("API Error No Response:", error.message);
     } else {

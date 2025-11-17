@@ -21,12 +21,33 @@ export const API_ENDPOINTS = {
     LOGOUT: 'auth/logout',
     IS_LOGGED_IN: 'auth/isLoggedIn',
     FORGOT_PASSWORD: 'auth/forgot-password',
+    ME: 'auth/me',
   },
   
   // User endpoints (from existing constants)
   USERS: {
-    ME: 'users/me',
+    ME: 'auth/me', // Changed from 'users/me' to 'auth/me'
     ORGANIZATION_MEMBERSHIP: 'users/organization-membership',
+  },
+  
+  // Food Ordering endpoints
+  FOOD_ORDERING: {
+    // Restaurants
+    RESTAURANTS: 'restaurants',
+    RESTAURANT_DETAILS: (id: string) => `restaurants/${id}`,
+    RESTAURANT_MENU: (id: string) => `restaurants/${id}/menu`,
+    
+    // Orders
+    ORDERS: 'orders',
+    ORDER_DETAILS: (id: string) => `orders/${id}`,
+    ORDER_ITEMS: (orderId: string) => `orders/${orderId}/items`,
+    ORDER_ITEM: (orderId: string, itemId: string) => `orders/${orderId}/items/${itemId}`,
+    ORDER_CHECKOUT: (id: string) => `orders/${id}/checkout`,
+    ORDER_CANCEL: (id: string) => `orders/${id}/cancel`,
+    
+    // Payment Methods
+    PAYMENT_METHODS: 'payment-methods',
+    PAYMENT_METHOD: (id: string) => `payment-methods/${id}`,
   },
 } as const;
 

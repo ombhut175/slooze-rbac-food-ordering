@@ -15,17 +15,56 @@ apiClient.interceptors.response.use(
 
     // Handle network/no-response errors
     if (!error.response) {
+      hackLog.error('Network error - no response from server', {
+        url: error.config?.url,
+        method: error.config?.method,
+      });
       toast.error(API_MESSAGES.NETWORK_ERROR)
       return Promise.reject(error)
+    }
+
+    const status = error.response.status;
+
+    // Handle 401 Unauthorized
+    if (status === HTTP_STATUS.UNAUTHORIZED) {
+      hackLog.error('Unauthorized request', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: 401,
+      });
+      toast.error('Your session has expired. Please log in again.');
+      return Promise.reject(error);
+    }
+
+    // Handle 403 Forbidden
+    if (status === HTTP_STATUS.FORBIDDEN) {
+      hackLog.error('Forbidden request - insufficient permissions', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: 403,
+      });
+      const backendMessage = extractErrorMessage(error);
+      toast.error(backendMessage || 'You do not have permission to perform this action.');
+      return Promise.reject(error);
     }
 
     // Prefer backend-provided message when available
     const backendMessage = extractErrorMessage(error)
     if (backendMessage) {
+      hackLog.error('API error with backend message', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status,
+        message: backendMessage,
+      });
       toast.error(backendMessage)
     } else {
-      const status = error.response.status
       if (status >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+        hackLog.error('Server error', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status,
+        });
         toast.error(API_MESSAGES.SERVER_ERROR)
       }
     }

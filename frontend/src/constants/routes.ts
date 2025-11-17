@@ -15,6 +15,17 @@ export const ROUTES = {
     FORGOT_PASSWORD: '/forgot-password',
   },
   
+  // Food Ordering routes
+  FOOD_ORDERING: {
+    RESTAURANTS: '/restaurants',
+    RESTAURANT_MENU: (id: string) => `/restaurants/${id}`,
+    ORDERS: '/orders',
+    ORDER_DETAILS: (id: string) => `/orders/${id}`,
+    ORDER_CONFIRMATION: (id: string) => `/orders/${id}/confirmation`,
+    CHECKOUT: (orderId: string) => `/checkout/${orderId}`,
+    PAYMENT_METHODS: '/payment-methods',
+  },
+  
   // Style guide and docs
   STYLEGUIDE: '/styleguide',
   
@@ -32,21 +43,43 @@ export const NAV_ITEMS = [
     title: 'Dashboard',
     href: ROUTES.DASHBOARD,
     icon: 'home',
+    adminOnly: false,
   },
   {
     title: 'Nexlog',
     href: ROUTES.NEXLOG,
     icon: 'activity',
+    adminOnly: false,
   },
   {
     title: 'Testing Dashboard',
     href: ROUTES.TESTING,
     icon: 'beaker',
+    adminOnly: false,
+  },
+  {
+    title: 'Restaurants',
+    href: ROUTES.FOOD_ORDERING.RESTAURANTS,
+    icon: 'utensils',
+    adminOnly: false,
+  },
+  {
+    title: 'Orders',
+    href: ROUTES.FOOD_ORDERING.ORDERS,
+    icon: 'shopping-bag',
+    adminOnly: false,
+  },
+  {
+    title: 'Payment Methods',
+    href: ROUTES.FOOD_ORDERING.PAYMENT_METHODS,
+    icon: 'credit-card',
+    adminOnly: true,
   },
   {
     title: 'Style Guide',
     href: ROUTES.STYLEGUIDE,
     icon: 'palette',
+    adminOnly: false,
   },
 ] as const;
 

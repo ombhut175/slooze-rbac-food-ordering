@@ -183,6 +183,8 @@ export class AuthController {
           ? {
               id: result.publicUser.id,
               email: result.publicUser.email,
+              role: result.publicUser.role,
+              country: result.publicUser.country,
               isEmailVerified: result.publicUser.isEmailVerified,
               createdAt: result.publicUser.createdAt.toISOString(),
               updatedAt: result.publicUser.updatedAt.toISOString(),
@@ -285,6 +287,8 @@ export class AuthController {
           ? {
               id: result.publicUser.id,
               email: result.publicUser.email,
+              role: result.publicUser.role,
+              country: result.publicUser.country,
               isEmailVerified: result.publicUser.isEmailVerified,
               createdAt: result.publicUser.createdAt.toISOString(),
               updatedAt: result.publicUser.updatedAt.toISOString(),
@@ -600,12 +604,26 @@ export class AuthController {
 
       return successResponse(
         {
-          id: user.id,
-          email: user.email,
-          email_confirmed_at: user.email_confirmed_at,
+          user: {
+            id: user.id,
+            email: user.email,
+            email_confirmed_at: user.email_confirmed_at,
+            isEmailVerified,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+          },
+          publicUser: publicUser
+            ? {
+                id: publicUser.id,
+                email: publicUser.email,
+                role: publicUser.role,
+                country: publicUser.country,
+                isEmailVerified: publicUser.isEmailVerified,
+                createdAt: publicUser.createdAt,
+                updatedAt: publicUser.updatedAt,
+              }
+            : null,
           isEmailVerified,
-          created_at: user.created_at,
-          updated_at: user.updated_at,
         },
         'User information retrieved successfully',
       );

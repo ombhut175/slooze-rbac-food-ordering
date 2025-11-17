@@ -148,7 +148,7 @@ export const hackLog = {
         window.performance.measure(label, `${label}-start`, `${label}-end`);
         const measure = window.performance.getEntriesByName(label)[0];
         actualDuration = measure ? measure.duration : duration;
-      } catch (e) {
+      } catch {
         // Ignore performance measurement errors
       }
     } else if (typeof console !== 'undefined' && console.timeEnd) {

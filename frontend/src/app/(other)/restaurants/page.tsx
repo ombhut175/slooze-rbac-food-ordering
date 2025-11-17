@@ -1,0 +1,253 @@
+"use client";
+
+import * as React from "react";
+import { motion } from "framer-motion";
+import { Utensils, AlertCircle, RefreshCw } from "lucide-react";
+import { useAuthStore } from "@/hooks/use-auth-store";
+import { useAuthProtection } from "@/components/auth/auth-provider";
+import { AppNavigation } from "@/components/app-navigation";
+import { useRestaurants } from "@/hooks/use-restaurants";
+import { CountryBadge } from "@/components/food-ordering/country-badge";
+import hackLog from "@/lib/logger";
+import type { Restaurant } from "@/types/food-ordering";
+import { ROUTES } from "@/constants/routes";
+import Link from "next/link";
+
+// Skeleton loader for restaurant cards
+function RestaurantCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="animate-pulse">
+        <div className="mb-4 h-6 w-3/4 rounded bg-slate-200 dark:bg-slate-700"></div>
+        <div className="mb-2 h-4 w-1/2 rounded bg-slate-200 dark:bg-slate-700"></div>
+        <div className="h-4 w-1/4 rounded bg-slate-200 dark:bg-slate-700"></div>
+      </div>
+    </div>
+  );
+}
+
+// Restaurant card component
+interface RestaurantCardProps {
+  restaurant: Restaurant;
+}
+
+function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const isActive = restaurant.status === 'ACTIVE';
+
+  return (
+    <Link href={ROUTES.FOOD_ORDERING.RESTAURANT_MENU(restaurant.id) as any}>
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        transition={{ duration: 0.2 }}
+        className="cursor-pointer rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md dark:border-slate-700 dark:bg-slate-800"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+              {restaurant.name}
+            </h3>
+            <div className="mt-2 flex items-center gap-2">
+              <CountryBadge country={restaurant.country} size="md" />
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm ${
+                  isActive
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400'
+                }`}
+              >
+                <span className={`h-2 w-2 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-600'}`}></span>
+                {isActive ? 'Active' : 'Inactive'}
+              </span>
+            </div>
+          </div>
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+            <Utensils className="h-6 w-6" />
+          </div>
+        </div>
+      </motion.div>
+    </Link>
+  );
+}
+
+// Empty state component
+function EmptyState() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+        <Utensils className="h-10 w-10" />
+      </div>
+      <h3 className="mt-6 text-xl font-semibold text-slate-900 dark:text-slate-100">
+        No restaurants available
+      </h3>
+      <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
+        There are no restaurants in your area at the moment.
+        <br />
+        Please check back later.
+      </p>
+    </motion.div>
+  );
+}
+
+// Error state component
+interface ErrorStateProps {
+  error: any;
+  onRetry: () => void;
+}
+
+function ErrorState({ error, onRetry }: ErrorStateProps) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col items-center justify-center py-16"
+    >
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400">
+        <AlertCircle className="h-10 w-10" />
+      </div>
+      <h3 className="mt-6 text-xl font-semibold text-slate-900 dark:text-slate-100">
+        Failed to load restaurants
+      </h3>
+      <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
+        {error?.message || 'An error occurred while loading restaurants.'}
+      </p>
+      <button
+        onClick={onRetry}
+        className="mt-6 inline-flex items-center gap-2 rounded-lg bg-orange-600 px-6 py-3 font-medium text-white transition-colors hover:bg-orange-700"
+      >
+        <RefreshCw className="h-4 w-4" />
+        Try Again
+      </button>
+    </motion.div>
+  );
+}
+
+export default function RestaurantsPage() {
+  const { user, publicUser } = useAuthStore();
+  const { shouldRender } = useAuthProtection();
+  const { restaurants, isLoading, error, isEmpty, refetch } = useRestaurants();
+
+  React.useEffect(() => {
+    hackLog.componentMount('RestaurantsPage', {
+      hasUser: !!user,
+      userId: user?.id,
+      userRole: publicUser?.role,
+      userCountry: publicUser?.country,
+      isAuthenticated: !!user,
+      timestamp: new Date().toISOString(),
+    });
+
+    return () => {
+      hackLog.dev('RestaurantsPage unmounting', {
+        timestamp: new Date().toISOString(),
+      });
+    };
+  }, [user, publicUser]);
+
+  // Handle restaurant click
+  const handleRestaurantClick = (restaurantId: string) => {
+    hackLog.dev('User clicked restaurant', {
+      restaurantId,
+      userId: user?.id,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
+  // Handle retry
+  const handleRetry = () => {
+    hackLog.dev('User clicked retry', {
+      userId: user?.id,
+      timestamp: new Date().toISOString(),
+    });
+    refetch();
+  };
+
+  // Don't render if user is not authenticated
+  if (!shouldRender || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-orange-600 border-t-transparent"></div>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
+      {/* App Navigation */}
+      <AppNavigation />
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Page Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-orange-700 dark:text-orange-100 sm:text-4xl">
+              Restaurants
+            </h1>
+            <p className="mt-2 text-orange-600 dark:text-orange-300">
+              Browse restaurants and discover delicious food options
+            </p>
+          </div>
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <RestaurantCardSkeleton key={i} />
+              ))}
+            </div>
+          )}
+
+          {/* Error State */}
+          {!isLoading && error && (
+            <ErrorState error={error} onRetry={handleRetry} />
+          )}
+
+          {/* Empty State */}
+          {!isLoading && !error && isEmpty && <EmptyState />}
+
+          {/* Restaurants Grid */}
+          {!isLoading && !error && !isEmpty && (
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {restaurants.map((restaurant) => (
+                <motion.div
+                  key={restaurant.id}
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0 },
+                  }}
+                  onClick={() => handleRestaurantClick(restaurant.id)}
+                >
+                  <RestaurantCard restaurant={restaurant} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </motion.div>
+      </main>
+    </div>
+  );
+}

@@ -37,6 +37,8 @@ export interface UserInfo {
 export interface PublicUser {
   id: string;
   email: string;
+  role: 'ADMIN' | 'MANAGER' | 'MEMBER';
+  country: 'IN' | 'US';
   isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;

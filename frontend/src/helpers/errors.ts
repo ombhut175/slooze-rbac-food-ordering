@@ -118,7 +118,7 @@ export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
       return await asyncFn(...args);
     } catch (error) {
       handleError(error, options);
-      throw error; // Re-throw so calling code can handle it too if needed
+      throw error;
     }
   }) as T;
 }

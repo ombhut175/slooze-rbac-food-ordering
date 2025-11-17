@@ -40,6 +40,7 @@ export default tseslint.config(
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
       '@typescript-eslint/no-unnecessary-type-parameters': 'off',
+      '@typescript-eslint/no-deprecated': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
     },

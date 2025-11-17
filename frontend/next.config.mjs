@@ -11,7 +11,6 @@ const nextConfig = {
   },
   env: {
     PORT: '3656',
-    // Explicitly include the API URL for client-side access
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   typedRoutes: true,

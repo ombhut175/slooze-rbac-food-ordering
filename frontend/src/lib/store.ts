@@ -16,7 +16,7 @@ interface TestingStore {
   // Actions
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
-  setErrorFromException: (error: unknown) => void // 🚨 Uses helpers/errors
+  setErrorFromException: (error: unknown) => void
   setTestingData: (data: any) => void
   setLastRefresh: (date: Date) => void
   setSystemStatus: (status: 'healthy' | 'warning' | 'error' | 'unknown') => void

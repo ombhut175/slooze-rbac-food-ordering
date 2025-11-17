@@ -890,11 +890,129 @@ Notes for contributors:
 
 ## 🧩 Other pages with components (frontend/src/app/(other))
 
-I couldn't find a `frontend/src/app/(other)` folder in this workspace. If you add pages that live under an `(other)` group, document them here using the same pattern as the auth section:
+### Food Ordering System
 
-Example template to add:
+The food ordering system provides a complete RBAC-enabled interface for browsing restaurants, managing orders, and processing payments. All pages follow the orange/amber gradient theme and use role-based access control.
 
-- `frontend/src/app/(other)/<page>/page.tsx` — Short description of the page and what components it uses.
-- `frontend/src/app/(other)/<page>/_components/...` — Reusable UI components for the page and where logic lives (hooks/stores/constants).
+#### Pages
 
-If you want, I can scan for other top-level app folders (like `dashboard`, `testing`, etc.) and add them the same way.
+- `frontend/src/app/(other)/restaurants/page.tsx` — Restaurants list page. Displays all restaurants filtered by user's country (non-admins only see their country). Uses `useRestaurants()` hook for data fetching, shows loading skeletons, empty states, and error handling. Logs with `hackLog.componentMount()`.
+
+- `frontend/src/app/(other)/restaurants/[id]/page.tsx` — Restaurant menu page. Shows restaurant details and menu items with "Add to Cart" functionality. Uses `useRestaurantMenu()` and `useCart()` hooks. Displays floating cart summary, handles currency formatting (INR/USD), and shows success toasts on add to cart.
+
+- `frontend/src/app/(other)/orders/page.tsx` — Orders list page. Displays user's orders with status filtering (All, Draft, Paid, Canceled). Uses `useOrders()` hook. Shows country indicators for ADMIN users. Responsive layout (table on desktop, cards on mobile).
+
+- `frontend/src/app/(other)/orders/[id]/page.tsx` — Order details page. Shows complete order summary with items, totals, and payment info. Displays role-based action buttons (Checkout for ADMIN/MANAGER, hidden for MEMBER). Uses `useOrder()` and `useOrderActions()` hooks. Includes cancel confirmation dialog.
+
+- `frontend/src/app/(other)/checkout/[orderId]/page.tsx` — Checkout page. Two-column layout with order summary and payment method selection. Uses `useOrder()`, `usePaymentMethods()`, and `useCheckout()` hooks. Handles checkout processing, cart clearing, and navigation to confirmation page.
+
+- `frontend/src/app/(other)/orders/[id]/confirmation/page.tsx` — Order confirmation page. Success page after checkout with celebration animation. Displays order summary and navigation buttons to view order details or continue shopping.
+
+- `frontend/src/app/(other)/payment-methods/page.tsx` — Payment methods management page (ADMIN only). Lists all payment methods with create/edit functionality. Uses `usePaymentMethods()` hook. Includes admin-only route protection with redirect for non-admins.
+
+#### Reusable Components
+
+- `frontend/src/components/food-ordering/restaurant-card.tsx` — Restaurant card component with hover effects, country badge, and status indicator. Used in restaurants list page.
+
+- `frontend/src/components/food-ordering/menu-item.tsx` — Menu item card with image, description, price, and add to cart button. Includes quantity selector and loading states.
+
+- `frontend/src/components/food-ordering/cart-sidebar.tsx` — Slide-in cart sidebar with item list, quantity controls, remove buttons, and checkout button (role-based). Uses Framer Motion for animations. Integrates with `useCart()` hook.
+
+- `frontend/src/components/food-ordering/order-card.tsx` — Order card displaying order ID, restaurant name, total, status badge, and date. Used in orders list with click-to-details functionality.
+
+- `frontend/src/components/food-ordering/status-badge.tsx` — Color-coded status badges for orders (DRAFT=gray, PENDING=yellow, PAID=green, CANCELED=red). Supports multiple sizes.
+
+- `frontend/src/components/food-ordering/role-badge.tsx` — Role indicator badges (ADMIN=purple, MANAGER=blue, MEMBER=gray) with icons. Used in navigation and user profile areas.
+
+- `frontend/src/components/food-ordering/country-badge.tsx` — Country badge with flag emoji (🇮🇳 India, 🇺🇸 United States). Used on restaurant and order cards.
+
+- `frontend/src/components/food-ordering/payment-method-form.tsx` — Modal form component for creating and updating payment methods. Includes validation, loading states, and success/error toast notifications.
+
+#### Custom Hooks
+
+- `frontend/src/hooks/use-restaurants.ts` — Fetches restaurants list with SWR. Automatically filtered by user's country on backend. Includes error handling and loading states.
+
+- `frontend/src/hooks/use-restaurant-menu.ts` — Fetches restaurant details and menu items. Parallel fetching with combined loading state.
+
+- `frontend/src/hooks/use-orders.ts` — Fetches user's orders list with SWR. Country-scoped for non-admin users. Supports real-time updates.
+
+- `frontend/src/hooks/use-order.ts` — Fetches single order details with items and payment info. Auto-refresh on focus.
+
+- `frontend/src/hooks/use-cart.ts` — Cart operations hook with addItem, removeItem, updateQuantity functions. Handles automatic order creation, optimistic updates, and SWR cache invalidation. Logs all operations with `hackLog.storeAction()`.
+
+- `frontend/src/hooks/use-checkout.ts` — Checkout processing hook. Handles payment method selection, order completion, cart clearing, and navigation. Includes comprehensive error handling.
+
+- `frontend/src/hooks/use-order-actions.ts` — Order action hooks for cancel functionality. Includes confirmation dialogs and error handling.
+
+- `frontend/src/hooks/use-payment-methods.ts` — Fetches payment methods list with SWR. Used in checkout and payment management pages.
+
+- `frontend/src/hooks/use-role-check.ts` — Helper hook for role-based UI visibility. Provides functions like `canCheckout()`, `canCancelOrder()`, `canManagePaymentMethods()`.
+
+- `frontend/src/hooks/use-cart-store.ts` — Zustand store for cart state management. Stores orderId, restaurantId, and cart sidebar visibility. Persists to localStorage. Logs all actions with `hackLog.storeAction()`.
+
+#### API Integration
+
+All food ordering API endpoints are defined in `frontend/src/constants/api.ts` under `API_ENDPOINTS.FOOD_ORDERING`:
+- Restaurants: `GET /restaurants`, `GET /restaurants/:id/menu`
+- Orders: `GET /orders`, `GET /orders/:id`, `POST /orders`, `POST /orders/:id/items`, `PATCH /orders/:id/items/:itemId`, `DELETE /orders/:id/items/:itemId`, `POST /orders/:id/checkout`, `POST /orders/:id/cancel`
+- Payment Methods: `GET /payment-methods`, `POST /payment-methods`, `PATCH /payment-methods/:id`
+
+All API calls follow the mandatory helpers pattern:
+- Use `apiRequest` from `@/helpers/request` for all HTTP calls
+- Use `handleError` from `@/helpers/errors` for error processing
+- Log all requests with `hackLog.apiRequest()`, `hackLog.apiSuccess()`, `hackLog.apiError()`
+
+#### Type Definitions
+
+All TypeScript interfaces are defined in `frontend/src/types/food-ordering.ts`:
+- `Restaurant` - Restaurant entity with country and status
+- `MenuItem` - Menu item with pricing and availability
+- `Order` - Order entity with status, total, and country
+- `OrderItem` - Order line item with quantity and pricing
+- `PaymentMethod` - Payment method with brand, last4, expiry, and country
+
+#### Role-Based Access Control
+
+The food ordering system implements three user roles:
+- **ADMIN**: Full access to all features including payment methods management, can see all countries
+- **MANAGER**: Can checkout and cancel orders, restricted to their country
+- **MEMBER**: Can browse and add to cart only, restricted to their country, cannot checkout
+
+Role checks are performed using `useRoleCheck()` hook and UI elements are conditionally rendered based on permissions.
+
+#### Country-Scoped Data
+
+Non-admin users (MANAGER and MEMBER) only see data from their assigned country:
+- Restaurants filtered by country
+- Orders filtered by country
+- Currency formatting matches country (INR for India, USD for US)
+- Country badges displayed on relevant cards
+
+ADMIN users see data from all countries with country indicators.
+
+#### Logging and Error Handling
+
+All food ordering components follow the mandatory logging rules:
+- Component lifecycle: `hackLog.componentMount()`, `hackLog.componentUpdate()`
+- API calls: `hackLog.apiRequest()`, `hackLog.apiSuccess()`, `hackLog.apiError()`
+- State changes: `hackLog.storeAction()`, `hackLog.storeUpdate()`
+- Form submissions: `hackLog.formSubmit()`, `hackLog.formValidation()`
+- Errors: `hackLog.error()` with full context
+
+All errors are processed through `@/helpers/errors` and displayed as toast notifications with user-friendly messages.
+
+#### Visual Design
+
+Food ordering pages match the existing auth and dashboard theme:
+- Orange/amber gradient backgrounds (`bg-gradient-to-b from-white via-orange-50 to-amber-50`)
+- Consistent card styles with rounded corners and shadows
+- Framer Motion animations for page entrances and transitions
+- Responsive design (mobile, tablet, desktop)
+- Dark mode support with appropriate color adjustments
+
+Notes for contributors:
+- All API calls must go through `@/helpers/request` (never use fetch() directly)
+- All errors must be processed with `@/helpers/errors`
+- Follow the mandatory logging rules with `hackLog` methods
+- Use role checks from `useRoleCheck()` for conditional rendering
+- Test with different user roles (ADMIN, MANAGER, MEMBER) and countries (IN, US)

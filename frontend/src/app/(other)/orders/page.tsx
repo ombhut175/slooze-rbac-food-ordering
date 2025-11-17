@@ -59,33 +59,37 @@ function OrderCard({ order, showCountry, onClick }: OrderCardProps) {
 
   return (
     <motion.div
-      whileHover={{ scale: 1.01 }}
+      whileHover={{ scale: 1.01, y: -4 }}
       transition={{ duration: 0.2 }}
       onClick={onClick}
-      className="cursor-pointer rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-orange-300 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-orange-700"
+      className="group relative cursor-pointer overflow-hidden rounded-xl border border-orange-200/50 bg-white/80 p-6 shadow-sm backdrop-blur-sm transition-all hover:border-orange-300 hover:shadow-lg dark:border-orange-900/30 dark:bg-slate-800/80 dark:hover:border-orange-700"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            Order #{shortOrderId}
-          </p>
-          <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {order.restaurant?.name || "Unknown Restaurant"}
-          </h3>
+      {/* Gradient overlay on hover */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+      <div className="relative">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+              Order #{shortOrderId}
+            </p>
+            <h3 className="mt-1 text-lg font-semibold text-slate-900 transition-colors group-hover:text-orange-700 dark:text-slate-100 dark:group-hover:text-orange-300">
+              {order.restaurant?.name || "Unknown Restaurant"}
+            </h3>
           {showCountry && (
             <div className="mt-2">
               <CountryBadge country={order.country} size="sm" />
             </div>
           )}
+          </div>
+          <StatusBadge status={order.status} size="md" />
         </div>
-        <StatusBadge status={order.status} size="md" />
-      </div>
-      <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4 dark:border-slate-700">
-        <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-          {formatCurrency(order.totalAmountCents, order.currency)}
-        </div>
-        <div className="text-sm text-slate-500 dark:text-slate-400">
-          {orderDate}
+        <div className="mt-4 flex items-center justify-between border-t border-orange-200/50 pt-4 dark:border-orange-900/30">
+          <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+            {formatCurrency(order.totalAmountCents, order.currency)}
+          </div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">
+            {orderDate}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -377,23 +381,48 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
+    <div className="relative min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
+      {/* Background Aura Effects */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-red-400/30 to-orange-400/20 blur-3xl dark:from-red-600/20 dark:to-orange-600/10" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/25 to-green-400/20 blur-3xl dark:from-amber-600/15 dark:to-green-600/10" />
+        <div
+          className="absolute inset-0 opacity-[0.35] [mask-image:radial-gradient(55%_60%_at_50%_40%,black,transparent)] dark:opacity-[0.25]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(100,116,139,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,0.15) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+            backgroundPosition: "-1px -1px",
+          }}
+        />
+      </div>
+
       <AppNavigation />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-orange-700 dark:text-orange-100 sm:text-4xl">
+          {/* Hero Header with Gradient */}
+          <div className="mb-10">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              className="bg-gradient-to-r from-orange-700 via-red-600 to-pink-600 bg-clip-text text-4xl font-extrabold leading-tight tracking-tight text-transparent sm:text-5xl dark:from-orange-400 dark:via-red-400 dark:to-pink-400"
+            >
               My Orders
-            </h1>
-            <p className="mt-2 text-orange-600 dark:text-orange-300">
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mt-3 text-lg text-orange-600 dark:text-orange-300"
+            >
               View and manage your order history
-            </p>
+            </motion.p>
           </div>
 
           {/* Status Filter Buttons */}

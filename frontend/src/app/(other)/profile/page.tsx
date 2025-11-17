@@ -127,26 +127,47 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
+    <div className="relative min-h-screen bg-gradient-to-b from-white via-orange-50 to-amber-50 dark:from-slate-950 dark:via-orange-950/30 dark:to-slate-950">
+      {/* Background Aura Effects */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-gradient-to-br from-red-400/30 to-orange-400/20 blur-3xl dark:from-red-600/20 dark:to-orange-600/10" />
+        <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-gradient-to-tr from-amber-400/25 to-green-400/20 blur-3xl dark:from-amber-600/15 dark:to-green-600/10" />
+        <div
+          className="absolute inset-0 opacity-[0.35] [mask-image:radial-gradient(55%_60%_at_50%_40%,black,transparent)] dark:opacity-[0.25]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(100,116,139,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(100,116,139,0.15) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+            backgroundPosition: "-1px -1px",
+          }}
+        />
+      </div>
+
       {/* App Navigation */}
       <AppNavigation />
 
       {/* Main Content */}
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Header */}
+      <main className="relative z-10 mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+        <div>
+          {/* Header with Gradient */}
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-orange-700 dark:text-orange-100 sm:text-4xl">
+              <motion.h1
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-gradient-to-r from-orange-700 via-red-600 to-pink-600 bg-clip-text text-3xl font-extrabold leading-tight tracking-tight text-transparent sm:text-4xl dark:from-orange-400 dark:via-red-400 dark:to-pink-400"
+              >
                 My Profile
-              </h1>
-              <p className="mt-2 text-orange-600 dark:text-orange-300">
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="mt-2 text-lg text-orange-600 dark:text-orange-300"
+              >
                 View your account information
-              </p>
+              </motion.p>
             </div>
             <Button
               variant="outline"
@@ -176,17 +197,28 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
-          {/* Profile Header Card */}
-          <Card className="mb-6 overflow-hidden border-slate-200 shadow-sm dark:border-slate-700">
-            <div className="relative h-32 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500">
-              <div className="absolute inset-0 bg-black/10"></div>
-            </div>
-            <CardContent className="relative -mt-16 pb-6">
-              <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-end">
-                {/* Avatar */}
-                <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-orange-500 to-red-500 text-5xl font-bold text-white shadow-lg dark:border-slate-800">
-                  {displayData.user.email.charAt(0).toUpperCase()}
-                </div>
+          {/* Profile Header Card - Premium Design */}
+          <Card className="mb-6 overflow-hidden border-orange-200/50 shadow-lg dark:border-orange-900/30">
+              <div className="relative h-32 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500">
+                <div className="absolute inset-0 bg-black/10"></div>
+                {/* Animated gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity hover:opacity-100" />
+              </div>
+              <CardContent className="relative -mt-16 pb-6">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-end">
+                  {/* Avatar with Glow Effect */}
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.5, type: "spring" }}
+                    whileHover={{ scale: 1.05 }}
+                    className="relative"
+                  >
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-500 to-red-500 blur-xl opacity-50" />
+                    <div className="relative flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-orange-500 to-red-500 text-5xl font-bold text-white shadow-lg dark:border-slate-800">
+                      {displayData.user.email.charAt(0).toUpperCase()}
+                    </div>
+                  </motion.div>
 
                 {/* User Info */}
                 <div className="flex-1 text-center sm:text-left">
@@ -214,8 +246,8 @@ export default function ProfilePage() {
           </Card>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Account Information */}
-            <Card className="border-slate-200 shadow-sm dark:border-slate-700">
+            {/* Account Information - Premium Card */}
+            <Card className="border-orange-200/50 shadow-sm backdrop-blur-sm dark:border-orange-900/30 dark:bg-slate-800/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-orange-600" />
@@ -316,8 +348,8 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            {/* Account Activity */}
-            <Card className="border-slate-200 shadow-sm dark:border-slate-700">
+            {/* Account Activity - Premium Card */}
+            <Card className="border-orange-200/50 shadow-sm backdrop-blur-sm dark:border-orange-900/30 dark:bg-slate-800/80">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-orange-600" />
@@ -377,8 +409,8 @@ export default function ProfilePage() {
             </Card>
           </div>
 
-          {/* Quick Actions */}
-          <Card className="mt-6 border-slate-200 shadow-sm dark:border-slate-700">
+          {/* Quick Actions - Premium Card */}
+          <Card className="mt-6 border-orange-200/50 shadow-sm backdrop-blur-sm dark:border-orange-900/30 dark:bg-slate-800/80">
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>Navigate to other sections</CardDescription>
@@ -418,7 +450,7 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </main>
     </div>
   );

@@ -223,6 +223,135 @@ export class UsersRepository extends BaseRepository<UserEntity> {
     }
   }
 
+  async findAll(): Promise<UserEntity[]> {
+    this.logger.log('Finding all users with ordering', {
+      operation: 'findAll',
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      const result = await this.db
+        .select()
+        .from(users)
+        .orderBy(users.createdAt);
+
+      this.logger.log(`Found ${result.length} users`, {
+        operation: 'findAll',
+        count: result.length,
+        timestamp: new Date().toISOString(),
+      });
+
+      return result as UserEntity[];
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Failed to find all users', {
+        operation: 'findAll',
+        error: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
+  async updateUserRole(userId: string, role: string): Promise<UserEntity> {
+    this.logger.log('Updating user role', {
+      operation: 'updateUserRole',
+      userId,
+      newRole: role,
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      const result = await this.db
+        .update(users)
+        .set({
+          role: role as any,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!result.length) {
+        this.logger.warn('User not found for role update', {
+          operation: 'updateUserRole',
+          userId,
+          timestamp: new Date().toISOString(),
+        });
+        throw new Error(MESSAGES.USER_NOT_FOUND);
+      }
+
+      this.logger.log('User role updated successfully', {
+        operation: 'updateUserRole',
+        userId,
+        newRole: role,
+        timestamp: new Date().toISOString(),
+      });
+
+      return result[0] as UserEntity;
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Failed to update user role', {
+        operation: 'updateUserRole',
+        userId,
+        newRole: role,
+        error: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
+  async updateUserCountry(
+    userId: string,
+    country: string,
+  ): Promise<UserEntity> {
+    this.logger.log('Updating user country', {
+      operation: 'updateUserCountry',
+      userId,
+      newCountry: country,
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      const result = await this.db
+        .update(users)
+        .set({
+          country: country as any,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!result.length) {
+        this.logger.warn('User not found for country update', {
+          operation: 'updateUserCountry',
+          userId,
+          timestamp: new Date().toISOString(),
+        });
+        throw new Error(MESSAGES.USER_NOT_FOUND);
+      }
+
+      this.logger.log('User country updated successfully', {
+        operation: 'updateUserCountry',
+        userId,
+        newCountry: country,
+        timestamp: new Date().toISOString(),
+      });
+
+      return result[0] as UserEntity;
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Failed to update user country', {
+        operation: 'updateUserCountry',
+        userId,
+        newCountry: country,
+        error: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
   async getUsersCount(): Promise<number> {
     this.logger.log('Counting total users');
     return this.count(users);

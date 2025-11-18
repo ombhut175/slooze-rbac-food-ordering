@@ -68,6 +68,213 @@ The system supports two countries:
 
 ## API Endpoints
 
+## User Management (ADMIN Only)
+
+### Get All Users
+
+Retrieves a list of all users in the system. Only accessible to ADMIN users.
+
+**Endpoint:** `GET /users`
+
+**Authentication:** Required (ADMIN only)
+
+**Access Control:**
+- ADMIN: Returns all users from all countries
+- MANAGER/MEMBER: Returns 403 Forbidden
+
+**Request Example:**
+
+```bash
+curl -X GET http://localhost:3000/users \
+  -H "Authorization: Bearer <your_token>"
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Users retrieved successfully",
+  "data": [
+    {
+      "id": "623e4567-e89b-12d3-a456-426614174005",
+      "email": "admin@example.com",
+      "role": "ADMIN",
+      "country": "IN",
+      "isEmailVerified": true,
+      "createdAt": "2024-01-10T08:00:00.000Z",
+      "updatedAt": "2024-01-10T08:00:00.000Z"
+    },
+    {
+      "id": "723e4567-e89b-12d3-a456-426614174006",
+      "email": "manager@example.com",
+      "role": "MANAGER",
+      "country": "US",
+      "isEmailVerified": true,
+      "createdAt": "2024-01-11T09:00:00.000Z",
+      "updatedAt": "2024-01-11T09:00:00.000Z"
+    }
+  ]
+}
+```
+
+**Response Fields:**
+- `id` (string, uuid): Unique user identifier
+- `email` (string): User email address
+- `role` (string): User role (ADMIN, MANAGER, or MEMBER)
+- `country` (string): User's assigned country (IN or US)
+- `isEmailVerified` (boolean): Email verification status
+- `createdAt` (string, ISO 8601): Account creation timestamp
+- `updatedAt` (string, ISO 8601): Last update timestamp
+
+**Error Responses:**
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+
+---
+
+### Update User Role
+
+Updates the role of a specific user. Only ADMIN users can update roles. Admins cannot remove their own ADMIN role.
+
+**Endpoint:** `PATCH /users/:id/role`
+
+**Authentication:** Required (ADMIN only)
+
+**Path Parameters:**
+- `id` (string, uuid, required): User ID
+
+**Request Body:**
+
+```json
+{
+  "role": "MANAGER"
+}
+```
+
+**Request Body Fields:**
+- `role` (string, required): New role for the user (ADMIN, MANAGER, or MEMBER)
+
+**Request Example:**
+
+```bash
+curl -X PATCH http://localhost:3000/users/723e4567-e89b-12d3-a456-426614174006/role \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "role": "MANAGER"
+  }'
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "User role updated successfully",
+  "data": {
+    "id": "723e4567-e89b-12d3-a456-426614174006",
+    "email": "manager@example.com",
+    "role": "MANAGER",
+    "country": "US",
+    "isEmailVerified": true,
+    "createdAt": "2024-01-11T09:00:00.000Z",
+    "updatedAt": "2024-01-15T14:30:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid role value or attempting to remove own ADMIN role
+  ```json
+  {
+    "statusCode": 400,
+    "message": "Cannot remove your own ADMIN role",
+    "error": "Bad Request"
+  }
+  ```
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+- `404 Not Found`: User with specified ID not found
+  ```json
+  {
+    "statusCode": 404,
+    "message": "User with ID 723e4567-e89b-12d3-a456-426614174006 not found",
+    "error": "Not Found"
+  }
+  ```
+
+---
+
+### Update User Country
+
+Updates the country assignment of a specific user. Only ADMIN users can update user countries.
+
+**Endpoint:** `PATCH /users/:id/country`
+
+**Authentication:** Required (ADMIN only)
+
+**Path Parameters:**
+- `id` (string, uuid, required): User ID
+
+**Request Body:**
+
+```json
+{
+  "country": "US"
+}
+```
+
+**Request Body Fields:**
+- `country` (string, required): New country for the user (IN or US)
+
+**Request Example:**
+
+```bash
+curl -X PATCH http://localhost:3000/users/723e4567-e89b-12d3-a456-426614174006/country \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "country": "US"
+  }'
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "User country updated successfully",
+  "data": {
+    "id": "723e4567-e89b-12d3-a456-426614174006",
+    "email": "manager@example.com",
+    "role": "MANAGER",
+    "country": "US",
+    "isEmailVerified": true,
+    "createdAt": "2024-01-11T09:00:00.000Z",
+    "updatedAt": "2024-01-15T14:35:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid country value
+  ```json
+  {
+    "statusCode": 400,
+    "message": ["country must be one of the following values: IN, US"],
+    "error": "Bad Request"
+  }
+  ```
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+- `404 Not Found`: User with specified ID not found
+
+---
+
 ## Restaurants
 
 ### Get All Restaurants
@@ -123,6 +330,212 @@ curl -X GET http://localhost:3000/restaurants \
 
 **Error Responses:**
 - `401 Unauthorized`: Invalid or missing authentication token
+
+---
+
+### Get All Restaurants (Admin)
+
+Retrieves all restaurants from all countries. Only accessible to ADMIN users. This endpoint bypasses country filtering.
+
+**Endpoint:** `GET /restaurants/all`
+
+**Authentication:** Required (ADMIN only)
+
+**Access Control:**
+- ADMIN: Returns all restaurants from all countries
+- MANAGER/MEMBER: Returns 403 Forbidden
+
+**Request Example:**
+
+```bash
+curl -X GET http://localhost:3000/restaurants/all \
+  -H "Authorization: Bearer <your_token>"
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "All restaurants retrieved successfully",
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "Spice Paradise",
+      "country": "IN",
+      "status": "ACTIVE",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    },
+    {
+      "id": "223e4567-e89b-12d3-a456-426614174001",
+      "name": "American Diner",
+      "country": "US",
+      "status": "ACTIVE",
+      "createdAt": "2024-01-15T10:35:00.000Z",
+      "updatedAt": "2024-01-15T10:35:00.000Z"
+    }
+  ]
+}
+```
+
+**Response Fields:**
+- `id` (string, uuid): Unique restaurant identifier
+- `name` (string): Restaurant name
+- `country` (string): Country code (IN or US)
+- `status` (string): Restaurant status (ACTIVE or INACTIVE)
+- `createdAt` (string, ISO 8601): Creation timestamp
+- `updatedAt` (string, ISO 8601): Last update timestamp
+
+**Error Responses:**
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+
+---
+
+### Create Restaurant
+
+Creates a new restaurant. Only ADMIN users can create restaurants.
+
+**Endpoint:** `POST /restaurants`
+
+**Authentication:** Required (ADMIN only)
+
+**Request Body:**
+
+```json
+{
+  "name": "Spice Paradise",
+  "country": "IN",
+  "status": "ACTIVE"
+}
+```
+
+**Request Body Fields:**
+- `name` (string, required): Restaurant name
+- `country` (string, required): Country code (IN or US)
+- `status` (string, optional): Restaurant status (ACTIVE or INACTIVE, defaults to ACTIVE)
+
+**Request Example:**
+
+```bash
+curl -X POST http://localhost:3000/restaurants \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Spice Paradise",
+    "country": "IN",
+    "status": "ACTIVE"
+  }'
+```
+
+**Response (201 Created):**
+
+```json
+{
+  "statusCode": 201,
+  "success": true,
+  "message": "Restaurant created successfully",
+  "data": {
+    "id": "323e4567-e89b-12d3-a456-426614174010",
+    "name": "Spice Paradise",
+    "country": "IN",
+    "status": "ACTIVE",
+    "createdAt": "2024-01-15T15:00:00.000Z",
+    "updatedAt": "2024-01-15T15:00:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid input data
+  ```json
+  {
+    "statusCode": 400,
+    "message": ["name should not be empty", "country must be one of the following values: IN, US"],
+    "error": "Bad Request"
+  }
+  ```
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+
+---
+
+### Update Restaurant
+
+Updates an existing restaurant. Only ADMIN users can update restaurants. Restaurant country cannot be changed if the restaurant has existing orders.
+
+**Endpoint:** `PATCH /restaurants/:id`
+
+**Authentication:** Required (ADMIN only)
+
+**Path Parameters:**
+- `id` (string, uuid, required): Restaurant ID
+
+**Request Body:**
+
+```json
+{
+  "name": "Spice Paradise Deluxe",
+  "status": "INACTIVE"
+}
+```
+
+**Request Body Fields (all optional):**
+- `name` (string): Restaurant name
+- `country` (string): Country code (IN or US) - cannot be changed if restaurant has orders
+- `status` (string): Restaurant status (ACTIVE or INACTIVE)
+
+**Request Example:**
+
+```bash
+curl -X PATCH http://localhost:3000/restaurants/323e4567-e89b-12d3-a456-426614174010 \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Spice Paradise Deluxe",
+    "status": "INACTIVE"
+  }'
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Restaurant updated successfully",
+  "data": {
+    "id": "323e4567-e89b-12d3-a456-426614174010",
+    "name": "Spice Paradise Deluxe",
+    "country": "IN",
+    "status": "INACTIVE",
+    "createdAt": "2024-01-15T15:00:00.000Z",
+    "updatedAt": "2024-01-15T15:30:00.000Z"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid input data or attempting to change country when orders exist
+  ```json
+  {
+    "statusCode": 400,
+    "message": "Cannot change country for restaurant with existing orders",
+    "error": "Bad Request"
+  }
+  ```
+- `401 Unauthorized`: Invalid or missing authentication token
+- `403 Forbidden`: User does not have ADMIN role
+- `404 Not Found`: Restaurant with specified ID not found
+  ```json
+  {
+    "statusCode": 404,
+    "message": "Restaurant with ID 323e4567-e89b-12d3-a456-426614174010 not found",
+    "error": "Not Found"
+  }
+  ```
 
 ---
 
@@ -815,6 +1228,53 @@ curl -X POST http://localhost:3000/orders/<order_id>/checkout \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
   -d '{"paymentMethodId": "<payment_method_id>"}'
+```
+
+### Admin User Management Example
+
+```bash
+# 1. Get all users (ADMIN only)
+curl -X GET http://localhost:3000/users \
+  -H "Authorization: Bearer <your_token>"
+
+# 2. Update user role (ADMIN only)
+curl -X PATCH http://localhost:3000/users/<user_id>/role \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "MANAGER"}'
+
+# 3. Update user country (ADMIN only)
+curl -X PATCH http://localhost:3000/users/<user_id>/country \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{"country": "US"}'
+```
+
+### Admin Restaurant Management Example
+
+```bash
+# 1. Get all restaurants (ADMIN only)
+curl -X GET http://localhost:3000/restaurants/all \
+  -H "Authorization: Bearer <your_token>"
+
+# 2. Create a new restaurant (ADMIN only)
+curl -X POST http://localhost:3000/restaurants \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "New Restaurant",
+    "country": "IN",
+    "status": "ACTIVE"
+  }'
+
+# 3. Update restaurant (ADMIN only)
+curl -X PATCH http://localhost:3000/restaurants/<restaurant_id> \
+  -H "Authorization: Bearer <your_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Updated Restaurant Name",
+    "status": "INACTIVE"
+  }'
 ```
 
 ---

@@ -6,6 +6,7 @@ export const ROUTES = {
   HOME: '/',
   DASHBOARD: '/dashboard',
   PROFILE: '/profile',
+  ADMIN: '/admin',
   
   // Auth routes (using Next.js route groups)
   AUTH: {
@@ -53,6 +54,12 @@ export const NAV_ITEMS = [
     title: 'Payment Methods',
     href: ROUTES.FOOD_ORDERING.PAYMENT_METHODS,
     icon: 'credit-card',
+    adminOnly: true,
+  },
+  {
+    title: 'Admin',
+    href: ROUTES.ADMIN,
+    icon: 'shield',
     adminOnly: true,
   },
   {

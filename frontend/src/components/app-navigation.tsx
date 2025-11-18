@@ -51,8 +51,15 @@ export function AppNavigation() {
         <nav className="hidden items-center space-x-4 text-sm font-medium md:flex lg:space-x-6">
           {NAV_ITEMS.map((item) => {
             // Hide admin-only items for non-admin users
-            if (item.adminOnly && !canManagePaymentMethods()) {
-              return null;
+            if (item.adminOnly) {
+              // Admin link only for ADMIN role
+              if (item.href === ROUTES.ADMIN && publicUser?.role !== 'ADMIN') {
+                return null;
+              }
+              // Payment Methods for ADMIN role (using existing check)
+              if (item.href === ROUTES.FOOD_ORDERING.PAYMENT_METHODS && !canManagePaymentMethods()) {
+                return null;
+              }
             }
             
             return (
@@ -150,8 +157,15 @@ export function AppNavigation() {
           <nav className="container flex items-center space-x-4 overflow-x-auto px-4 py-2 text-sm font-medium">
             {NAV_ITEMS.map((item) => {
               // Hide admin-only items for non-admin users
-              if (item.adminOnly && !canManagePaymentMethods()) {
-                return null;
+              if (item.adminOnly) {
+                // Admin link only for ADMIN role
+                if (item.href === ROUTES.ADMIN && publicUser?.role !== 'ADMIN') {
+                  return null;
+                }
+                // Payment Methods for ADMIN role (using existing check)
+                if (item.href === ROUTES.FOOD_ORDERING.PAYMENT_METHODS && !canManagePaymentMethods()) {
+                  return null;
+                }
               }
               
               return (

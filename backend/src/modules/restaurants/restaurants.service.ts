@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { RestaurantsRepository } from '../../core/database/repositories/restaurants.repository';
 import type {
   RestaurantEntity,
   MenuItemEntity,
 } from '../../core/database/repositories/restaurants.repository';
+import { CreateRestaurantDto, UpdateRestaurantDto } from './dto';
 
 /**
  * Service for managing restaurants with country-scoped access
@@ -134,6 +135,142 @@ export class RestaurantsService {
       this.logger.error('Error getting restaurant menu', {
         operation: 'getMenu',
         restaurantId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new restaurant (ADMIN only)
+   * Returns the created restaurant
+   */
+  async createRestaurant(
+    createDto: CreateRestaurantDto,
+    adminUserId: string,
+  ): Promise<RestaurantEntity> {
+    this.logger.log('Creating restaurant', {
+      operation: 'createRestaurant',
+      restaurantData: createDto,
+      adminUserId,
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      const restaurant = await this.restaurantsRepository.create(createDto);
+
+      this.logger.log('Restaurant created successfully', {
+        operation: 'createRestaurant',
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        restaurantCountry: restaurant.country,
+        adminUserId,
+        timestamp: new Date().toISOString(),
+      });
+
+      return restaurant;
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Error creating restaurant', {
+        operation: 'createRestaurant',
+        restaurantData: createDto,
+        adminUserId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Update an existing restaurant (ADMIN only)
+   * Validates that country cannot be changed if restaurant has orders
+   * Returns the updated restaurant
+   */
+  async updateRestaurant(
+    restaurantId: string,
+    updateDto: UpdateRestaurantDto,
+  ): Promise<RestaurantEntity> {
+    this.logger.log('Updating restaurant', {
+      operation: 'updateRestaurant',
+      restaurantId,
+      updateData: updateDto,
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      // Check if restaurant has orders before allowing country change
+      if (updateDto.country) {
+        const hasOrders =
+          await this.restaurantsRepository.hasOrders(restaurantId);
+        if (hasOrders) {
+          this.logger.warn('Cannot change country for restaurant with orders', {
+            operation: 'updateRestaurant',
+            restaurantId,
+            requestedCountry: updateDto.country,
+            timestamp: new Date().toISOString(),
+          });
+          throw new BadRequestException(
+            'Cannot change country for restaurant with existing orders',
+          );
+        }
+      }
+
+      const restaurant = await this.restaurantsRepository.update(
+        restaurantId,
+        updateDto,
+      );
+
+      this.logger.log('Restaurant updated successfully', {
+        operation: 'updateRestaurant',
+        restaurantId,
+        restaurantName: restaurant.name,
+        restaurantCountry: restaurant.country,
+        timestamp: new Date().toISOString(),
+      });
+
+      return restaurant;
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Error updating restaurant', {
+        operation: 'updateRestaurant',
+        restaurantId,
+        updateData: updateDto,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: errorStack,
+        timestamp: new Date().toISOString(),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Get all restaurants for admin (no country filtering)
+   * Returns all restaurants in the system
+   */
+  async getAllRestaurantsForAdmin(): Promise<RestaurantEntity[]> {
+    this.logger.log('Getting all restaurants for admin', {
+      operation: 'getAllRestaurantsForAdmin',
+      timestamp: new Date().toISOString(),
+    });
+
+    try {
+      const restaurants = await this.restaurantsRepository.findAll();
+
+      this.logger.log('Retrieved all restaurants for admin', {
+        operation: 'getAllRestaurantsForAdmin',
+        restaurantCount: restaurants.length,
+        timestamp: new Date().toISOString(),
+      });
+
+      return restaurants;
+    } catch (error) {
+      const errorStack = error instanceof Error ? error.stack : '';
+      this.logger.error('Error getting all restaurants for admin', {
+        operation: 'getAllRestaurantsForAdmin',
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: errorStack,
         timestamp: new Date().toISOString(),

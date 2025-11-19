@@ -213,6 +213,13 @@ export class AuthController {
   @ApiBody({
     type: SignupDto,
     description: 'User registration details',
+    schema: {
+      example: {
+        email: 'jane.smith@example.com',
+        password: 'MySecurePassword123!',
+        country: 'US',
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -236,6 +243,8 @@ export class AuthController {
           publicUser: {
             id: '123e4567-e89b-12d3-a456-426614174000',
             email: 'jane.smith@example.com',
+            role: 'MEMBER',
+            country: 'US',
             isEmailVerified: false,
             createdAt: '2023-12-01T10:00:00.000Z',
             updatedAt: '2023-12-01T10:00:00.000Z',

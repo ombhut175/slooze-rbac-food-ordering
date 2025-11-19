@@ -12,6 +12,7 @@ export interface LoginRequest {
 export interface SignupRequest {
   email: string;
   password: string;
+  country?: 'IN' | 'US';
 }
 
 export interface ForgotPasswordRequest {

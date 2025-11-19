@@ -157,11 +157,15 @@ The system implements three user roles with different permissions:
 
 ### 🌍 Country-Scoped Data
 
-Users are assigned to a country (India or United States):
-- **Non-admin users** see only restaurants and orders from their country
-- **Admin users** see data from all countries with country indicators
-- Currency formatting matches user's country (₹ for India, $ for US)
-- Country badges displayed throughout the interface
+Users select their country during signup (India or United States):
+- **Country Selection**: Users choose their country during account registration
+- **Data Filtering**: Non-admin users see only restaurants and orders from their country
+- **Admin Access**: Admin users see data from all countries with country indicators
+- **Currency Formatting**: Matches user's country (₹ for India, $ for US)
+- **Visual Indicators**: Country badges and flags displayed throughout the interface
+- **Default Country**: Defaults to India (IN) if not specified during signup
+
+For detailed information about the country selection feature, see [Feature Documentation](./docs/FEATURES.md#country-selection-during-signup).
 
 ### 🎨 User Interface
 
@@ -944,6 +948,7 @@ For detailed API documentation with request/response examples, see [backend/RBAC
 ### Main Documentation
 - **[Quick Start Guide](./docs/QUICK_START.md)** - Get running in 5 minutes
 - **[Architecture Documentation](./docs/ARCHITECTURE.md)** - System design and patterns
+- **[Feature Documentation](./docs/FEATURES.md)** - Detailed feature implementations (Country Selection, RBAC, etc.)
 - **[Backend README](./backend/README.md)** - Backend setup, API, database, testing
 - **[Frontend README](./frontend/README.md)** - Frontend architecture, components, hooks
 - **[Frontend Development Rules](./frontend/docs/rules.md)** - Mandatory development guidelines

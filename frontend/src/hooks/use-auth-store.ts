@@ -139,9 +139,10 @@ export const useAuthStore = create<AuthState>()(
        * Returns true if successful, false if failed
        */
       signup: async (data: SignupRequest): Promise<boolean> => {
-        hackLog.storeAction('signup', {
+        hackLog.storeAction('signup-start', {
           email: data.email,
           passwordLength: data.password.length,
+          country: data.country || 'IN',
           trigger: 'user_action'
         });
 
@@ -154,9 +155,10 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await AuthAPI.signup(data);
           
-          hackLog.storeAction('signupSuccess', {
+          hackLog.storeAction('signup-success', {
             userId: response.user.id,
             email: response.user.email,
+            country: response.publicUser?.country,
             isEmailVerified: response.isEmailVerified
           });
 
@@ -176,6 +178,7 @@ export const useAuthStore = create<AuthState>()(
           hackLog.error('Signup failed', {
             error: errorMessage,
             email: data.email,
+            country: data.country || 'IN',
             component: 'AuthStore',
             action: 'signup'
           });

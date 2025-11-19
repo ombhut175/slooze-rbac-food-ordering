@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignupDto {
@@ -24,4 +31,16 @@ export class SignupDto {
   @IsNotEmpty({ message: 'Password is required' })
   @MinLength(8, { message: 'Password must be at least 8 characters long' })
   password!: string;
+
+  @ApiProperty({
+    description:
+      'User country code. Determines which restaurants and content the user can access',
+    example: 'IN',
+    enum: ['IN', 'US'],
+    default: 'IN',
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(['IN', 'US'], { message: 'Country must be either IN or US' })
+  country?: 'IN' | 'US';
 }

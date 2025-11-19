@@ -301,6 +301,38 @@ backend/src/
 
 ### 1. Authentication Flow
 
+**Signup Flow:**
+```
+┌─────────┐
+│  User   │
+└────┬────┘
+     │ 1. Enter email, password, country
+     ▼
+┌─────────────────┐
+│  Signup Page    │
+│  (Country Select)│
+└────┬────────────┘
+     │ 2. POST /auth/signup {email, password, country}
+     ▼
+┌─────────────────┐
+│  Auth Service   │
+└────┬────────────┘
+     │ 3. Create user with Supabase
+     │ 4. Create public user record with country
+     ▼
+┌─────────────────┐
+│ Supabase Auth   │
+│ + Database      │
+└────┬────────────┘
+     │ 5. Send confirmation email
+     ▼
+┌─────────────────┐
+│  Login Page     │
+│  (Redirect)     │
+└─────────────────┘
+```
+
+**Login Flow:**
 ```
 ┌─────────┐
 │  User   │
@@ -320,7 +352,7 @@ backend/src/
 ┌─────────────────┐
 │ Supabase Auth   │
 └────┬────────────┘
-     │ 4. Return JWT token
+     │ 4. Return JWT token + user data (with country)
      ▼
 ┌─────────────────┐
 │  Frontend       │
@@ -703,6 +735,19 @@ App Layout
 │       └── Logout Button
 │
 ├── Page Content
+│   ├── Auth Pages
+│   │   ├── Login Page
+│   │   │   ├── Email Input
+│   │   │   ├── Password Input
+│   │   │   └── Submit Button
+│   │   └── Signup Page
+│   │       ├── Name Input
+│   │       ├── Email Input
+│   │       ├── Country Select (IN/US)
+│   │       ├── Password Input
+│   │       ├── Confirm Password Input
+│   │       └── Submit Button
+│   │
 │   ├── Restaurants Page
 │   │   ├── Restaurant Card (multiple)
 │   │   │   ├── Country Badge

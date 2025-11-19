@@ -109,7 +109,7 @@ See [DATASETS.md](./DATASETS.md) for complete details.
 
 ### Authentication
 - `POST /auth/login` - User login
-- `POST /auth/signup` - User registration
+- `POST /auth/signup` - User registration (with country selection: IN or US)
 
 ### Users (ADMIN only)
 - `GET /users` - Get all users

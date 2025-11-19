@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import AuthCard, { Field, Input, PasswordInput, SubmitButton, MutedLink } from "../_components/auth-card";
+import { CountrySelect } from "../_components/country-select";
 import { useAuthStore } from "@/hooks/use-auth-store";
 import { useGuestProtection } from "@/components/auth/auth-provider";
 import { ROUTES } from "@/constants/routes";
@@ -13,7 +14,8 @@ export default function SignupPage() {
   const router = useRouter();
   const { signup, isSignupLoading, signupError, clearErrors } = useAuthStore();
   const { shouldRender } = useGuestProtection();
-  const [formErrors, setFormErrors] = React.useState<{ name?: string; email?: string; password?: string; confirm?: string } | null>(null);
+  const [country, setCountry] = React.useState<string>("IN");
+  const [formErrors, setFormErrors] = React.useState<{ name?: string; email?: string; password?: string; confirm?: string; country?: string } | null>(null);
 
   React.useEffect(() => {
     hackLog.componentMount('SignupPage', {
@@ -30,7 +32,7 @@ export default function SignupPage() {
     const email = String(form.get("email") || "").trim();
     const password = String(form.get("password") || "");
     const confirm = String(form.get("confirm") || "");
-    const nextErrors: { name?: string; email?: string; password?: string; confirm?: string } = {};
+    const nextErrors: { name?: string; email?: string; password?: string; confirm?: string; country?: string } = {};
     
     if (!name) nextErrors.name = "Your name is required";
     if (!email) nextErrors.email = "Email is required";
@@ -38,6 +40,8 @@ export default function SignupPage() {
     if (!password) nextErrors.password = "Password is required";
     else if (password.length < 8) nextErrors.password = "At least 8 characters";
     if (confirm !== password) nextErrors.confirm = "Passwords do not match";
+    if (!country) nextErrors.country = "Please select your country";
+    else if (!['IN', 'US'].includes(country)) nextErrors.country = "Invalid country selection";
     
     return { name, email, password, confirm, nextErrors };
   }
@@ -51,6 +55,7 @@ export default function SignupPage() {
       name,
       email,
       passwordLength: password.length,
+      country,
       hasValidationErrors: Object.keys(nextErrors).length > 0,
       component: 'SignupPage'
     });
@@ -67,12 +72,13 @@ export default function SignupPage() {
     }
 
     try {
-      // Backend signup only needs email and password (name is not in the DTO)
-      const success = await signup({ email, password });
+      // Backend signup needs email, password, and country
+      const success = await signup({ email, password, country: country as 'IN' | 'US' });
       
       if (success) {
         hackLog.storeAction('signupRedirect', {
           email,
+          country,
           redirectTo: ROUTES.AUTH.LOGIN,
           component: 'SignupPage'
         });
@@ -85,6 +91,7 @@ export default function SignupPage() {
       hackLog.error('Signup submission failed', {
         error: error.message,
         email,
+        country,
         component: 'SignupPage'
       });
     }
@@ -119,6 +126,18 @@ export default function SignupPage() {
             <Field label="Email" error={displayErrors?.email}>
               <Input name="email" type="email" inputMode="email" placeholder="you@school.edu" autoComplete="email" required />
             </Field>
+
+            <CountrySelect 
+              value={country}
+              onChange={(value) => {
+                setCountry(value);
+                hackLog.formValidation('signup-country', { 
+                  country: value, 
+                  component: 'SignupPage' 
+                });
+              }}
+              error={displayErrors?.country}
+            />
 
             <Field label="Password" hint="Use at least 8 characters." error={displayErrors?.password}>
               <PasswordInput name="password" placeholder="••••••••" autoComplete="new-password" required />

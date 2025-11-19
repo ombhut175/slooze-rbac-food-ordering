@@ -143,6 +143,20 @@ You should see the login page.
 
 After login, you should be redirected to the dashboard.
 
+### 3a. Test Signup (Optional)
+
+You can also test the signup flow:
+
+1. Click "Sign up" on the login page
+2. Fill in the form:
+   - Name: Your name
+   - Email: A new email address
+   - **Country: Select India (IN) or United States (US)**
+   - Password: At least 8 characters
+   - Confirm Password: Same as password
+3. Click "Create account"
+4. You'll be redirected to login (email confirmation required)
+
 ### 4. View API Documentation
 
 Navigate to: http://localhost:3000/api/docs
@@ -153,12 +167,13 @@ You should see the Swagger UI with all API endpoints.
 
 ### Explore the Application
 
-1. **Browse Restaurants** - View restaurants filtered by country
-2. **View Menu** - Click on a restaurant to see menu items
-3. **Add to Cart** - Add items to your shopping cart
-4. **Create Order** - Cart creates a draft order automatically
-5. **Checkout** - Complete order (ADMIN/MANAGER only)
-6. **View Orders** - See your order history
+1. **Sign Up** - Create a new account and select your country (IN or US)
+2. **Browse Restaurants** - View restaurants filtered by your country
+3. **View Menu** - Click on a restaurant to see menu items
+4. **Add to Cart** - Add items to your shopping cart
+5. **Create Order** - Cart creates a draft order automatically
+6. **Checkout** - Complete order (ADMIN/MANAGER only)
+7. **View Orders** - See your order history
 
 ### Test Different Roles
 

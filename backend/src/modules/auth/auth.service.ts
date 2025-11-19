@@ -108,6 +108,17 @@ export class AuthService {
     try {
       const supabase = this.supabaseService.getClient();
 
+      // Use provided country or default to 'IN'
+      const country = signupDto.country || 'IN';
+
+      // Log signup attempt with country
+      this.logger.log('User signup attempt', {
+        operation: 'signup',
+        email: signupDto.email,
+        country: country,
+        timestamp: new Date().toISOString(),
+      });
+
       const { data, error } = await supabase.auth.signUp({
         email: signupDto.email,
         password: signupDto.password,
@@ -144,9 +155,18 @@ export class AuthService {
           publicUser = await this.usersRepository.create({
             id: data.user.id, // Use Supabase user ID as the UUID id
             email: signupDto.email,
+            country: country, // Use country from signupDto or default
             isEmailVerified: false, // Set as false initially
           });
-          this.logger.log(`Public user record created for ${signupDto.email}`);
+          
+          // Log successful user record creation with country
+          this.logger.log('Public user record created', {
+            operation: 'signup',
+            email: signupDto.email,
+            userId: data.user.id,
+            country: publicUser.country,
+            timestamp: new Date().toISOString(),
+          });
         } catch (dbError) {
           const errorMessage =
             dbError instanceof Error ? dbError.message : 'Unknown error';
@@ -158,7 +178,8 @@ export class AuthService {
         }
       }
 
-      this.logger.log(`User ${signupDto.email} signed up successfully`);
+      // Log successful signup with country
+      this.logger.log(`User ${signupDto.email} signed up successfully with country ${publicUser?.country || country}`);
 
       return {
         message: MESSAGES.SIGNUP_SUCCESSFUL,

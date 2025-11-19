@@ -112,7 +112,7 @@ All API responses follow this consistent format:
 
 ### POST /api/auth/signup
 
-**Description**: Create a new user account with email and password. Sends email confirmation.
+**Description**: Create a new user account with email and password. Optionally specify country during registration. Sends email confirmation.
 
 **Authentication Required**: No
 
@@ -120,13 +120,15 @@ All API responses follow this consistent format:
 ```json
 {
   "email": "jane.smith@example.com",
-  "password": "MySecurePassword123!"
+  "password": "MySecurePassword123!",
+  "country": "US"
 }
 ```
 
 **Request Body Schema**:
 - `email` (string, required) - Valid email address (max 255 characters)
 - `password` (string, required) - User password (min 8 characters, max 100 characters)
+- `country` (string, optional) - User's country code ('IN' or 'US'). Defaults to 'IN' if not provided
 
 **Response Codes**:
 - `201 Created` - Account created successfully
@@ -144,10 +146,21 @@ All API responses follow this consistent format:
       "id": "123e4567-e89b-12d3-a456-426614174000",
       "email": "jane.smith@example.com",
       "email_confirmed_at": null,
+      "isEmailVerified": false,
       "created_at": "2023-12-01T10:00:00.000Z",
       "updated_at": "2023-12-01T10:00:00.000Z"
     },
-    "message": "Please check your email for confirmation instructions"
+    "publicUser": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "email": "jane.smith@example.com",
+      "role": "MEMBER",
+      "country": "US",
+      "isEmailVerified": false,
+      "createdAt": "2023-12-01T10:00:00.000Z",
+      "updatedAt": "2023-12-01T10:00:00.000Z"
+    },
+    "message": "Please check your email for confirmation instructions",
+    "emailConfirmationRequired": true
   }
 }
 ```
@@ -403,6 +416,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 3. Test endpoints using the interactive documentation
 
 ### Testing with cURL
+
+**Signup Example**:
+```bash
+curl -X POST http://localhost:3000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newuser@example.com",
+    "password": "SecurePass123!",
+    "country": "US"
+  }'
+```
 
 **Login Example**:
 ```bash
